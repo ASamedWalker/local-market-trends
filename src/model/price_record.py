@@ -1,11 +1,11 @@
 from sqlmodel import Field, SQLModel, Relationship
-from datatime import datetime
+from datetime import datetime
 from typing import Optional
-from uuid import UUID
+from uuid import UUID, uuid4
 
 
 class PriceRecord(SQLModel, table=True):
-    id: Optional[UUID] = Field(default=None, primary_key=True)
+    id: Optional[UUID] = Field(default_factory=uuid4, primary_key=True)
     grocery_item_id: UUID = Field(foreign_key="groceryitem.id")
     market_id: UUID = Field(foreign_key="market.id")
     price: float
