@@ -10,5 +10,7 @@ class PriceRecord(SQLModel, table=True):
     market_id: UUID = Field(foreign_key="market.id")
     price: float
     date_recorded: datetime = Field(default_factory=datetime.utcnow)
+    is_promotional: bool = Field(default=False)
+    promotional_details: Optional[str] = Field(default=None)
     grocery_item: Optional["GroceryItem"] = Relationship(back_populates="price_records")
     market: Optional["Market"] = Relationship(back_populates="price_records")

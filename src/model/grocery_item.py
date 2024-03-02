@@ -9,3 +9,4 @@ class GroceryItem(SQLModel, table=True):
     description: Optional[str] = Field(default=None)
     category: str
     price_records: List["PriceRecord"] = Relationship(back_populates="grocery_item")
+    special_offers: List["SpecialOffer"] = Relationship(back_populates="grocery_item")
