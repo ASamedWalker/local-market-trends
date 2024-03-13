@@ -1,38 +1,73 @@
-from fastapi import APIRouter, HTTPException
-from model.price_record import PriceRecord
-import fake.price_record as service
+from fastapi import APIRouter, HTTPException, Depends, status
+from sqlmodel import select
+from sqlmodel.ext.asyncio.session import AsyncSession
+from data.database import get_session
+from services.price_record_service import (
+    create_price_record,
+    get_price_record,
+    get_all_price_records,
+    update_price_record,
+    delete_price_record,
+)
+from uuid import UUID
 from typing import Optional, List
+
+
+from model.price_record import PriceRecord
 
 
 router = APIRouter(prefix="/price_record", tags=["price_record"])
 
 
-@router.get("/", response_model=List[PriceRecord])
-def get_all_endpoint() -> List[PriceRecord]:
-    return service.get_all()
-
-
-@router.get("/{grocery_item_id}", response_model=List[PriceRecord])
-def get_by_grocery_item_id_endpoint(grocery_item_id: str) -> List[PriceRecord]:
-    return service.get_by_grocery_item_id(grocery_item_id)
-
-
 @router.post("/", response_model=PriceRecord)
-def create_endpoint(record: PriceRecord) -> PriceRecord:
-    return service.create(record)
+async def create_price_record_endpoint(
+    price_record: PriceRecord, session: AsyncSession = Depends(get_session)
+) -> PriceRecord:
+    return await create_price_record(session, price_record)
 
 
-@router.put("/{record_id}", response_model=PriceRecord)
-def update_endpoint(record_id: str, record: PriceRecord) -> PriceRecord:
-    updated_record = service.update(record_id, record)
-    if updated_record:
-        return updated_record
-    raise HTTPException(status_code=404, detail="Record not found")
+@router.get("/", response_model=List[PriceRecord])
+async def get_all_price_records_endpoint(
+    session: AsyncSession = Depends(get_session),
+) -> List[PriceRecord]:
+    return await get_all_price_records(session)
 
 
-@router.delete("/{record_id}")
-def delete_endpoint(record_id: str) -> None:
-    deleted = service.delete(record_id)
-    if deleted:
-        return
-    raise HTTPException(status_code=404, detail="Record not found")
+@router.get("/{price_record_id}", response_model=PriceRecord)
+async def get_price_record_endpoint(
+    price_record_id: UUID, session: AsyncSession = Depends(get_session)
+) -> PriceRecord:
+    price_record = await get_price_record(session, price_record_id)
+    if not price_record:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Price record not found"
+        )
+    return price_record
+
+
+@router.put("/{price_record_id}", response_model=PriceRecord)
+async def update_price_record_endpoint(
+    price_record_id: UUID,
+    price_record: PriceRecord,
+    session: AsyncSession = Depends(get_session),
+) -> PriceRecord:
+    updated_price_record = await update_price_record(
+        session, price_record_id, price_record
+    )
+    if not updated_price_record:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Price record not found"
+        )
+    return updated_price_record
+
+
+@router.delete("/{price_record_id}", response_model=PriceRecord)
+async def delete_price_record_endpoint(
+    price_record_id: UUID, session: AsyncSession = Depends(get_session)
+) -> PriceRecord:
+    deleted_price_record = await delete_price_record(session, price_record_id)
+    if not deleted_price_record:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Price record not found"
+        )
+    return deleted_price_record

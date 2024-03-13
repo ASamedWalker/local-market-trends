@@ -1,40 +1,69 @@
-from fastapi import APIRouter, HTTPException
-from model.market import Market
-import fake.market as service
+from fastapi import APIRouter, HTTPException, Depends, status
 from typing import Optional, List
+from uuid import UUID
+from sqlmodel.ext.asyncio.session import AsyncSession
+from data.database import get_session
+from services.market_service import (
+    create_market,
+    get_market,
+    get_all_markets,
+    update_market,
+    delete_market,
+)
+
+
+from model.market import Market
 
 router = APIRouter(prefix="/market", tags=["market"])
 
 
+@router.post("/", response_model=Market)
+async def create_market_endpoint(
+    market: Market, session: AsyncSession = Depends(get_session)
+) -> Market:
+    return await create_market(session, market)
+
+
 @router.get("/", response_model=List[Market])
-def get_all_endpoint() -> List[Market]:
-    return service.get_all()
+async def get_all_markets_endpoint(
+    session: AsyncSession = Depends(get_session),
+) -> List[Market]:
+    return await get_all_markets(session)
 
 
 @router.get("/{market_id}", response_model=Market)
-def get_by_id_endpoint(market_id: str) -> Market:
-    market = service.get_by_id(market_id)
-    if market:
-        return market
-    raise HTTPException(status_code=404, detail="Market not found")
-
-
-@router.post("/", response_model=Market)
-def create_endpoint(market: Market) -> Market:
-    return service.create(market)
+async def get_market_endpoint(
+    market_id: UUID, session: AsyncSession = Depends(get_session)
+) -> Market:
+    market = await get_market(session, market_id)
+    if not market:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Market not found"
+        )
+    return market
 
 
 @router.put("/{market_id}", response_model=Market)
-def update_endpoint(market_id: str, market: Market) -> Market:
-    updated_market = service.update(market_id, market)
-    if updated_market:
-        return updated_market
-    raise HTTPException(status_code=404, detail="Market not found")
+async def update_market_endpoint(
+    market_id: UUID,
+    market: Market,
+    session: AsyncSession = Depends(get_session),
+) -> Market:
+    updated_market = await update_market(session, market_id, market)
+    if not updated_market:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Market not found"
+        )
+    return updated_market
 
 
-@router.delete("/{market_id}")
-def delete_endpoint(market_id: str) -> None:
-    deleted = service.delete(market_id)
-    if deleted:
-        return
-    raise HTTPException(status_code=404, detail="Market not found")
+@router.delete("/{market_id}", response_model=Market)
+async def delete_market_endpoint(
+    market_id: UUID, session: AsyncSession = Depends(get_session)
+) -> Market:
+    deleted_market = await delete_market(session, market_id)
+    if not deleted_market:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Market not found"
+        )
+    return deleted_market

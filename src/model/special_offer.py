@@ -10,6 +10,7 @@ class SpecialOffer(SQLModel, table=True):
     description: str
     valid_from: datetime
     valid_to: datetime
+    image_url: Optional[str] = None
 
     # Ensure that valid_from is before valid_to
     def is_valid_offer(self) -> bool:

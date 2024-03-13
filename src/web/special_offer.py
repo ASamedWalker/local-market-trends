@@ -1,55 +1,71 @@
-import fake.special_offer as service
-from fastapi import APIRouter, HTTPException
-from model.special_offer import SpecialOffer
+from fastapi import APIRouter, HTTPException, Depends, status
+from data.database import get_session
+from sqlalchemy.ext.asyncio.session import AsyncSession
 from typing import List, Optional
 from uuid import UUID, uuid4
+from services.special_offer_service import (
+    create_special_offer,
+    get_special_offer,
+    get_all_special_offers,
+    update_special_offer,
+    delete_special_offer,
+)
+
+
+from model.special_offer import SpecialOffer
 
 router = APIRouter(prefix="/special_offer", tags=["special_offer"])
 
 
-@router.get("/", response_model=List[SpecialOffer])
-def get_all_endpoint() -> List[SpecialOffer]:
-    return service.get_all()
-
-
-@router.get("/{grocery_item_id}", response_model=List[SpecialOffer])
-def get_by_grocery_item_id_endpoint(grocery_item_id: str) -> List[SpecialOffer]:
-    return service.get_by_grocery_item_id(grocery_item_id)
-
-
-@router.get("/best/{grocery_item_id}", response_model=Optional[SpecialOffer])
-def get_best_offer_for_grocery_item_endpoint(
-    grocery_item_id: str,
-) -> Optional[SpecialOffer]:
-    return service.get_best_offer_for_grocery_item(grocery_item_id)
-
-
-@router.get("/active/{grocery_item_id}", response_model=List[SpecialOffer])
-def get_active_offers_for_grocery_item_endpoint(
-    grocery_item_id: UUID,
-) -> List[SpecialOffer]:
-    active_offers = service.get_active_offers()
-    return [
-        offer for offer in active_offers if offer.grocery_item_id == grocery_item_id
-    ]
-
-
 @router.post("/", response_model=SpecialOffer)
-def create_endpoint(offer: SpecialOffer) -> SpecialOffer:
-    return service.create(offer)
+async def create_special_offer_endpoint(
+    special_offer: SpecialOffer, session: AsyncSession = Depends(get_session)
+) -> SpecialOffer:
+    return await create_special_offer(session, special_offer)
 
 
-@router.put("/{offer_id}", response_model=SpecialOffer)
-def update_endpoint(offer_id: str, offer: SpecialOffer) -> SpecialOffer:
-    updated_offer = service.update(offer_id, offer)
-    if updated_offer:
-        return updated_offer
-    raise HTTPException(status_code=404, detail="Offer not found")
+@router.get("/", response_model=List[SpecialOffer])
+async def get_all_special_offers_endpoint(
+    session: AsyncSession = Depends(get_session),
+) -> List[SpecialOffer]:
+    return await get_all_special_offers(session)
 
 
-@router.delete("/{offer_id}")
-def delete_endpoint(offer_id: str) -> None:
-    deleted = service.delete(offer_id)
-    if deleted:
-        return
-    raise HTTPException(status_code=404, detail="Offer not found")
+@router.get("/{special_offer_id}", response_model=SpecialOffer)
+async def get_special_offer_endpoint(
+    special_offer_id: UUID, session: AsyncSession = Depends(get_session)
+) -> SpecialOffer:
+    special_offer = await get_special_offer(session, special_offer_id)
+    if not special_offer:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Special offer not found"
+        )
+    return special_offer
+
+
+@router.put("/{special_offer_id}", response_model=SpecialOffer)
+async def update_special_offer_endpoint(
+    special_offer_id: UUID,
+    special_offer: SpecialOffer,
+    session: AsyncSession = Depends(get_session),
+) -> SpecialOffer:
+    updated_special_offer = await update_special_offer(
+        session, special_offer_id, special_offer
+    )
+    if not updated_special_offer:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Special offer not found"
+        )
+    return updated_special_offer
+
+
+@router.delete("/{special_offer_id}", response_model=SpecialOffer)
+async def delete_special_offer_endpoint(
+    special_offer_id: UUID, session: AsyncSession = Depends(get_session)
+) -> SpecialOffer:
+    special_offer = await delete_special_offer(session, special_offer_id)
+    if not special_offer:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Special offer not found"
+        )
+    return special_offer
