@@ -13,7 +13,7 @@ from uuid import UUID
 from typing import Optional, List
 
 
-from model.price_record import PriceRecord
+from models.price_record import PriceRecord
 
 
 router = APIRouter(prefix="/price_record", tags=["price_record"])

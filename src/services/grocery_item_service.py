@@ -9,7 +9,7 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 # import fake.grocery_item as grocery_item_db
 
 
-from model.grocery_item import GroceryItem
+from src.models.grocery_item import GroceryItem
 
 
 async def create_grocery_item(

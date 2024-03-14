@@ -12,7 +12,7 @@ from services.grocery_item_service import (
 )
 
 
-from model.grocery_item import GroceryItem
+from models.grocery_item import GroceryItem
 
 # import fake.grocery_item as service
 

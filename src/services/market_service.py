@@ -8,7 +8,7 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 
 # import fake.market as market_db
 
-from model.market import Market
+from src.models.market import Market
 
 
 async def create_market(session: AsyncSession, market: Market) -> Market:

@@ -12,7 +12,7 @@ from services.special_offer_service import (
 )
 
 
-from model.special_offer import SpecialOffer
+from models.special_offer import SpecialOffer
 
 router = APIRouter(prefix="/special_offer", tags=["special_offer"])
 
