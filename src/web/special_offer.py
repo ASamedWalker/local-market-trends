@@ -1,9 +1,9 @@
 from fastapi import APIRouter, HTTPException, Depends, status
-from data.database import get_session
-from sqlalchemy.ext.asyncio.session import AsyncSession
 from typing import List, Optional
 from uuid import UUID, uuid4
-from services.special_offer_service import (
+from sqlalchemy.ext.asyncio.session import AsyncSession
+from src.data.database import get_session
+from src.services.special_offer_service import (
     create_special_offer,
     get_special_offer,
     get_all_special_offers,
@@ -12,7 +12,7 @@ from services.special_offer_service import (
 )
 
 
-from models.special_offer import SpecialOffer
+from src.models.special_offer import SpecialOffer
 
 router = APIRouter(prefix="/special_offer", tags=["special_offer"])
 

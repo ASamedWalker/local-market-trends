@@ -1,8 +1,8 @@
 from fastapi import APIRouter, HTTPException, Depends, status
 from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
-from data.database import get_session
-from services.price_record_service import (
+from src.data.database import get_session
+from src.services.price_record_service import (
     create_price_record,
     get_price_record,
     get_all_price_records,
@@ -13,7 +13,7 @@ from uuid import UUID
 from typing import Optional, List
 
 
-from models.price_record import PriceRecord
+from src.models.price_record import PriceRecord
 
 
 router = APIRouter(prefix="/price_record", tags=["price_record"])
