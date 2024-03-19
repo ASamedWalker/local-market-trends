@@ -1,5 +1,5 @@
 import pytest
-from uuid import uuid4
+from uuid import uuid4, UUID
 from datetime import datetime
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker

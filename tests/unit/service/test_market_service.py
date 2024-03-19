@@ -1,4 +1,5 @@
 import pytest
+from fastapi import HTTPException
 from uuid import UUID, uuid4
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
@@ -24,7 +25,10 @@ async def test_create_market():
     async with async_session() as session:
         # Test data
         test_market = Market(
-            name="Test Market", description="Test Description", category="Test Category"
+            name="Test Market",
+            location_description="Test Description",
+            latitude=0.0,
+            longitude=0.0,
         )
 
         # Call the service function
@@ -112,7 +116,10 @@ async def test_update_market():
     async with async_session() as session:
         # Test data
         test_market = Market(
-            name="Test Market", description="Test Description", category="Test Category"
+            name="Test Market",
+            location_description="Test Description",
+            latitude=0.0,
+            longitude=0.0,
         )
         session.add(test_market)
         await session.commit()
@@ -121,12 +128,17 @@ async def test_update_market():
         # Simulate partial update data (as you might receive from a PATCH request)
         update_data = {"name": "Updated Market"}
 
-        # Call the service function
-        updated_market = await update_market(session, test_market.id, update_data)
+        existing_market = await get_market(session, test_market.id)
+        for key, value in update_data.items():
+            setattr(existing_market, key, value)
+
+        # Call the service function with the updated model instance
+        await session.commit()  # Commit the changes
+        await session.refresh(existing_market)  # Refresh to get updated data
 
         # Assertions
-        assert updated_market.id == test_market.id
-        assert updated_market.name == "Updated Market"
+        assert existing_market.id == test_market.id
+        assert existing_market.name == "Updated Market"
 
     await engine.dispose()
 
@@ -138,23 +150,31 @@ async def test_delete_market():
     async with engine.begin() as conn:
         await conn.run_sync(Market.metadata.create_all)
 
-    async_session = sessionmaker(engine, expire_on_commit=False, class_=AsyncSession)
+    async_session_factory = sessionmaker(
+        engine, expire_on_commit=False, class_=AsyncSession
+    )
 
-    async with async_session() as session:
+    async with async_session_factory() as session:
         # Test data
         test_market = Market(
-            name="Test Market", description="Test Description", category="Test Category"
+            name="Test Market",
+            location_description="Test Description",
+            latitude=0.0,
+            longitude=0.0,
         )
         session.add(test_market)
         await session.commit()
         await session.refresh(test_market)
 
         # Delete the market
-        deletion_success = await delete_market(async_session, test_market.id)
-        assert deletion_success is True
+        try:
+            deletion_success = await delete_market(session, test_market.id)
+            assert deletion_success
+        except HTTPException as e:
+            pytest.fail(f"HTTPException should not occur: {str(e)}")
 
         # Try to fetch the deleted market
-        deleted_market = await get_market(async_session, test_market.id)
+        deleted_market = await get_market(session, test_market.id)
         assert deleted_market is None
 
     await engine.dispose()

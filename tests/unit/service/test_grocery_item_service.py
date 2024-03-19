@@ -1,5 +1,5 @@
 import pytest
-from uuid import UUID
+from uuid import UUID, uuid4
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
 from src.services.grocery_item_service import (
