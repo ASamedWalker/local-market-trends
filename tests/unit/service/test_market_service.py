@@ -151,7 +151,7 @@ async def test_delete_market():
         await conn.run_sync(Market.metadata.create_all)
 
     async_session_factory = sessionmaker(
-        engine, expire_on_commit=False, class_=AsyncSession
+        bind=engine, expire_on_commit=False, class_=AsyncSession
     )
 
     async with async_session_factory() as session:
@@ -167,14 +167,14 @@ async def test_delete_market():
         await session.refresh(test_market)
 
         # Delete the market
-        try:
-            deletion_success = await delete_market(session, test_market.id)
-            assert deletion_success
-        except HTTPException as e:
-            pytest.fail(f"HTTPException should not occur: {str(e)}")
+        await delete_market(session, test_market.id)
 
-        # Try to fetch the deleted market
-        deleted_market = await get_market(session, test_market.id)
-        assert deleted_market is None
+        # Attempt to fetch the deleted market and expect a 404 error
+        with pytest.raises(HTTPException) as exc_info:
+            await get_market(session, test_market.id)
+
+        assert (
+            exc_info.value.status_code == 404
+        ), "Expected a 404 HTTPException for a non-existing market."
 
     await engine.dispose()
