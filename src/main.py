@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.routing import Lifespan
 from src.web import (
     grocery_item,
     market,
@@ -11,8 +12,8 @@ from src.data.database import create_db_and_tables
 app = FastAPI()
 
 
-@app.on_event("startup")
-def on_startup():
+@app.router.lifespan()
+def on_startup(lifespan: Lifespan):
     create_db_and_tables()
 
 

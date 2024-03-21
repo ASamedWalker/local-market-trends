@@ -35,6 +35,10 @@ def override_get_session(module):
     finally:
         db.close()
 
+
+@app.on_event("startup")
+def override_dependencies():
+    """Override get_session dependency with one that uses the test database."""
     app.dependency_overrides[get_session] = override_get_session
 
 
@@ -43,26 +47,3 @@ def test_read_main():
     response = client.get("/")
     assert response.status_code == 200
     assert response.json() == {"message": "Hello World"}
-
-
-# # Add more tests...
-# def test_create_market():
-#     """Example test for a create operation"""
-#     response = client.post(
-#         "/market/",
-#         json={"name": "Test Market", "location": "Test Location"},
-#     )
-#     assert response.status_code == 200
-#     data = response.json()
-#     assert data["name"] == "Test Market"
-#     assert data["location"] == "Test Location"
-
-
-# def test_get_all_markets():
-#     """Example test for a read operation"""
-#     response = client.get("/market/")
-#     assert response.status_code == 200
-#     data = response.json()
-#     assert len(data) == 1
-#     assert data[0]["name"] == "Test Market"
-#     assert data[0]["location"] == "Test Location"
