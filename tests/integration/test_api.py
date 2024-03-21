@@ -1,8 +1,9 @@
-from fastapi.testclient import TestClient
+# from fastapi.testclient import TestClient, WSGITransport
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlmodel import SQLModel
 from src.data.database import get_session
+import httpx
 
 from src.main import app
 from src.models import (
@@ -14,7 +15,8 @@ from src.models import (
 
 
 # Set up TestClient
-client = TestClient(app)
+
+client = httpx.Client(transport=httpx.WSGITransport(app=app))
 
 
 def override_get_session(module):

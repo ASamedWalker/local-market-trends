@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from fastapi.routing import Lifespan
+from contextlib import asynccontextmanager
 from src.web import (
     grocery_item,
     market,
@@ -9,11 +9,30 @@ from src.web import (
 )
 from src.data.database import create_db_and_tables
 
-app = FastAPI()
+
+# Assuming you have a hypothetical function to load and unload resources
+def load_resources():
+    print("Loading resources...")
+    # Code to load your resources, e.g., ML models, database connections, etc.
 
 
-@app.router.lifespan()
-def on_startup(lifespan: Lifespan):
+def unload_resources():
+    print("Unloading resources...")
+    # Code to unload/cleanup resources
+
+
+@asynccontextmanager
+async def app_lifespan(app: FastAPI):
+    load_resources()  # Load resources at startup
+    yield  # Wait for the app to run
+    unload_resources()  # Cleanup resources at shutdown
+
+
+app = FastAPI(lifespan=app_lifespan)
+
+
+@app.on_event("startup")
+def on_startup():
     create_db_and_tables()
 
 
