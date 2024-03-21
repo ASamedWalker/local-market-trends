@@ -23,17 +23,13 @@ def unload_resources():
 
 @asynccontextmanager
 async def app_lifespan(app: FastAPI):
+    create_db_and_tables()
     load_resources()  # Load resources at startup
     yield  # Wait for the app to run
     unload_resources()  # Cleanup resources at shutdown
 
 
 app = FastAPI(lifespan=app_lifespan)
-
-
-@app.on_event("startup")
-def on_startup():
-    create_db_and_tables()
 
 
 app.include_router(grocery_item.router)

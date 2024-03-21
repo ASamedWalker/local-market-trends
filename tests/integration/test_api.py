@@ -1,9 +1,9 @@
-# from fastapi.testclient import TestClient, WSGITransport
+import pytest
+from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlmodel import SQLModel
 from src.data.database import get_session
-import httpx
 
 from src.main import app
 from src.models import (
@@ -15,8 +15,7 @@ from src.models import (
 
 
 # Set up TestClient
-
-client = httpx.Client(transport=httpx.WSGITransport(app=app))
+client = TestClient(app)
 
 
 def override_get_session(module):
@@ -37,14 +36,13 @@ def override_get_session(module):
     finally:
         db.close()
 
-
-@app.on_event("startup")
-def override_dependencies():
-    """Override get_session dependency with one that uses the test database."""
     app.dependency_overrides[get_session] = override_get_session
+    yield
+    app.dependency_overrides.clear()
 
 
-def test_read_main():
+@pytest.mark.asyncio
+async def test_read_main():
     """Example test for a read operation"""
     response = client.get("/")
     assert response.status_code == 200
