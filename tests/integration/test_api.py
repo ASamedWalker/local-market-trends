@@ -4,6 +4,8 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlmodel import SQLModel
 from src.data.database import get_session
+from uuid import UUID, uuid4
+from httpx import AsyncClient
 
 from src.main import app
 from src.models import (
@@ -47,3 +49,18 @@ async def test_read_main():
     response = client.get("/")
     assert response.status_code == 200
     assert response.json() == {"message": "Hello World"}
+
+
+@pytest.mark.asyncio
+async def test_create_grocery_item():
+    async with AsyncClient(app=app, base_url="http://test") as client:
+        response = await client.post(
+            "/grocery_item/",
+            json={"name": "apple", "description": "A fruit"},
+        )
+    assert response.status_code == 200
+    response_json = response.json()
+    assert response_json["name"] == "apple"
+    assert response_json["description"] == "A fruit"
+    # Since 'id' is dynamically generated, assert its presence rather than its value
+    assert "id" in response_json
