@@ -41,7 +41,6 @@ app.include_router(read_session.router)
 app.include_router(create_grocery_item.router)
 
 
-
 if __name__ == "__main__":
     import uvicorn
 

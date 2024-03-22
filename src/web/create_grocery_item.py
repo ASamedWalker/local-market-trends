@@ -7,10 +7,24 @@ from src.data.database import (
 )
 from src.models import GroceryItem
 
+
 router = APIRouter()
 
 
 @router.post("/grocery_item/", response_model=GroceryItem)
-def read_root(item: GroceryItem, db: Session = Depends(get_session)):
-    db_item = GroceryItem(id=uuid4(), name=item.name, description=item.description)
-    return db_item
+async def create_grocery_item_endpoint(
+    item: GroceryItem, db: Session = Depends(get_session)
+):
+    try:
+        db_item = GroceryItem(
+            id=uuid4(),
+            name=item.name,
+            description=item.description,
+            category=item.category,
+        )
+        db.add(db_item)  # Add the item to the session
+        db.commit()  # Commit the transaction
+        db.refresh(db_item)
+        return await db_item
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
