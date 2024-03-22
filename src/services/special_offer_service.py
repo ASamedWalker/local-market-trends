@@ -7,16 +7,18 @@ from sqlalchemy.exc import NoResultFound, IntegrityError, SQLAlchemyError
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from src.models.special_offer import SpecialOffer
+from src.schemas.special_offer import SpecialOfferCreate
 
 
-async def create_special_offer(
-    session: AsyncSession, special_offer: SpecialOffer
+async def create_special_offer_service(
+    session: AsyncSession, special_offer: SpecialOfferCreate
 ) -> SpecialOffer:
     try:
-        session.add(special_offer)
+        new_special_offer = SpecialOffer(**special_offer.model_dump())
+        session.add(new_special_offer)
         await session.commit()
-        await session.refresh(special_offer)
-        return special_offer
+        await session.refresh(new_special_offer)
+        return new_special_offer
     except IntegrityError as e:
         await session.rollback()
         raise HTTPException(status_code=500, detail=str(e))
@@ -25,7 +27,7 @@ async def create_special_offer(
         raise HTTPException(status_code=500, detail=str(e))
 
 
-async def get_special_offer(
+async def get_special_offer_service(
     session: AsyncSession, special_offer_id: UUID
 ) -> Optional[SpecialOffer]:
     try:
@@ -39,7 +41,7 @@ async def get_special_offer(
         raise HTTPException(status_code=500, detail=str(e))
 
 
-async def get_all_special_offers(session: AsyncSession) -> List[SpecialOffer]:
+async def get_all_special_offer_service(session: AsyncSession) -> List[SpecialOffer]:
     try:
         result = await session.execute(select(SpecialOffer))
         special_offers = result.scalars().all()
@@ -48,7 +50,7 @@ async def get_all_special_offers(session: AsyncSession) -> List[SpecialOffer]:
         raise HTTPException(status_code=500, detail=str(e))
 
 
-async def update_special_offer(
+async def update_special_offer_service(
     session: AsyncSession, special_offer_id: UUID, special_offer_data: SpecialOffer
 ) -> Optional[SpecialOffer]:
     try:
@@ -64,7 +66,7 @@ async def update_special_offer(
         raise HTTPException(status_code=500, detail=str(e))
 
 
-async def delete_special_offer(session: AsyncSession, special_offer_id: UUID) -> bool:
+async def delete_special_offer_service(session: AsyncSession, special_offer_id: UUID) -> bool:
     try:
         special_offer = await session.get(SpecialOffer, special_offer_id)
         if special_offer:

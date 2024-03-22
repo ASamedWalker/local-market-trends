@@ -42,5 +42,10 @@ class SpecialOffer(SQLModel, table=True):
     valid_from: datetime
     valid_to: datetime
     image_url: Optional[str] = None
+
     # Relationship to GroceryItem
+    # Ensure that valid_from is before valid_to
+    def is_valid_offer(self) -> bool:
+        return self.valid_from <= self.valid_to
+
     grocery_item: Optional[GroceryItem] = Relationship(back_populates="special_offers")
