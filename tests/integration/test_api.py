@@ -15,8 +15,6 @@ from src.models import (
     PriceRecord,
 )
 
-
-# Set up TestClient
 client = TestClient(app)
 
 
@@ -53,7 +51,7 @@ async def test_read_main():
 
 @pytest.mark.asyncio
 async def test_create_grocery_item():
-    async with AsyncClient(app=app, base_url="http://test") as client:
+    async with AsyncClient(app=app, base_url="http://testserver") as client:
         response = await client.post(
             "/grocery_item/",
             json={"name": "apple", "description": "A fruit"},
@@ -62,5 +60,4 @@ async def test_create_grocery_item():
     response_json = response.json()
     assert response_json["name"] == "apple"
     assert response_json["description"] == "A fruit"
-    # Since 'id' is dynamically generated, assert its presence rather than its value
     assert "id" in response_json
