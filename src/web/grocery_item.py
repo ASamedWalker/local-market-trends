@@ -14,8 +14,6 @@ from src.services.grocery_item_service import (
 
 from src.models.grocery_item import GroceryItem
 
-# import fake.grocery_item as service
-
 
 router = APIRouter(prefix="/grocery_item", tags=["grocery_item"])
 

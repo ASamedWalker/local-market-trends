@@ -5,8 +5,6 @@ from src.web import (
     market,
     price_record,
     special_offer,
-    read_session,
-    create_grocery_item,
 )
 from src.data.database import create_db_and_tables
 
@@ -37,8 +35,6 @@ app.include_router(grocery_item.router)
 app.include_router(market.router)
 app.include_router(price_record.router)
 app.include_router(special_offer.router)
-app.include_router(read_session.router)
-app.include_router(create_grocery_item.router)
 
 
 if __name__ == "__main__":

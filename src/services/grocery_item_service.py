@@ -4,9 +4,7 @@ from typing import List, Optional
 from uuid import UUID
 from sqlmodel import select
 from sqlalchemy.exc import NoResultFound, IntegrityError, SQLAlchemyError
-from sqlmodel.ext.asyncio.session import AsyncSession
-
-# import fake.grocery_item as grocery_item_db
+from sqlalchemy.ext.asyncio import AsyncSession
 
 
 from src.models.grocery_item import GroceryItem
@@ -17,8 +15,11 @@ async def create_grocery_item(
 ) -> GroceryItem:
     try:
         session.add(grocery_item)
+        print("session has been added")
         await session.commit()
+        print("session has been committed")
         await session.refresh(grocery_item)
+        print("session has been refreshed")
         return grocery_item
     except IntegrityError as e:
         await session.rollback()
@@ -57,7 +58,7 @@ async def update_grocery_item(
     try:
         grocery_item = await session.get(GroceryItem, grocery_item_id)
         if grocery_item:
-            grocery_item_data.id = grocery_item_id  # Ensure ID remains unchanged
+            grocery_item_data.id = grocery_item_id  
             await session.merge(grocery_item_data)
             await session.commit()
             return await session.get(GroceryItem, grocery_item_id)

@@ -72,7 +72,7 @@ async def delete_market(session: AsyncSession, market_id: UUID) -> bool:
         if market:
             await session.delete(market)
             await session.commit()
-            return True
+            return market
         else:
             raise HTTPException(status_code=404, detail="Market not found")
     except SQLAlchemyError as e:
