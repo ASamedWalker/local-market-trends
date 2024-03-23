@@ -136,12 +136,12 @@ async def test_get_all_special_offers(async_client):
 
 
 @pytest.mark.asyncio
-async def test_update_special_offer(async_client):
-    # Assuming you've corrected the service layer to use .model_dump()
+async def test_update_special_offer(async_client: AsyncClient):
+    # Create a GroceryItem first to link with the SpecialOffer
     grocery_item_data = {
         "name": "Apple",
         "description": "A sweet apple",
-        "category": "Fruit",  # Assuming your GroceryItem model expects a category
+        "category": "Fruit",
     }
     grocery_item_response = await async_client.post(
         "/grocery_item/", json=grocery_item_data
@@ -149,32 +149,78 @@ async def test_update_special_offer(async_client):
     assert grocery_item_response.status_code == 200
     grocery_item = grocery_item_response.json()
 
-    data = {
-        "grocery_item_id": grocery_item[
-            "id"
-        ],
+    # Create a SpecialOffer linked to the GroceryItem
+    special_offer_data = {
+        "grocery_item_id": grocery_item["id"],
+        "description": "20% off!",
+        "valid_from": datetime.now().date().isoformat(),
+        "valid_to": (datetime.now().date() + timedelta(days=15)).isoformat(),
+    }
+    special_offer_response = await async_client.post(
+        "/special_offer/", json=special_offer_data
+    )
+    assert special_offer_response.status_code == 200
+    special_offer = special_offer_response.json()
+
+    # Update the SpecialOffer
+    update_data = {
         "description": "Buy one get one free!",
-        "valid_from": datetime.now()
-        .date()
-        .isoformat(),  # Example of converting dates to ISO format strings
+        "valid_from": datetime.now().date().isoformat(),
         "valid_to": (datetime.now().date() + timedelta(days=30)).isoformat(),
     }
-    response = await async_client.post("/special_offer/", json=data)
-    assert response.status_code == 200
+    update_response = await async_client.put(
+        f"/special_offer/{special_offer['id']}", json=update_data
+    )
+    assert update_response.status_code == 200
 
-    special_offer = response.json()
-    special_offer_id = special_offer["id"]
+    # Validate the updated fields
+    updated_special_offer = update_response.json()
+    assert updated_special_offer["description"] == update_data["description"]
 
-    data = {
-        "grocery_item_id": grocery_item[
-            "id"
-        ],
-        "description": "Buy one get one free!",
-        "valid_from": datetime.now()
-        .date()
-        .isoformat(),  # Example of converting dates to ISO format strings
-        "valid_to": (datetime.now().date() + timedelta(days=30)).isoformat(),
+    # Convert and compare datetime fields to ensure updates were applied correctly
+    valid_from_updated = datetime.fromisoformat(
+        updated_special_offer["valid_from"]
+    ).date()
+    valid_to_updated = datetime.fromisoformat(updated_special_offer["valid_to"]).date()
+    assert valid_from_updated == datetime.now().date()
+    assert valid_to_updated == (datetime.now().date() + timedelta(days=30))
+
+
+@pytest.mark.asyncio
+async def test_delete_special_offer(async_client: AsyncClient):
+    # Setup: Create a GroceryItem required for the SpecialOffer
+    grocery_item_data = {
+        "name": "Banana",
+        "description": "Rich in potassium",
+        "category": "Fruit",
     }
-    response = await async_client.put(f"/special_offer/{special_offer_id}", json=data)
-    assert response.status_code == 200
-    assert response.json() == data
+    grocery_item_response = await async_client.post(
+        "/grocery_item/", json=grocery_item_data
+    )
+    assert grocery_item_response.status_code == 200, "Failed to create grocery item"
+    grocery_item = grocery_item_response.json()
+
+    # Setup: Create a SpecialOffer linked to the GroceryItem
+    special_offer_data = {
+        "grocery_item_id": grocery_item["id"],
+        "description": "10% off!",
+        "valid_from": datetime.now().isoformat(),
+        "valid_to": (datetime.now() + timedelta(days=10)).isoformat(),
+    }
+    special_offer_response = await async_client.post(
+        "/special_offer/", json=special_offer_data
+    )
+    assert special_offer_response.status_code == 200, "Failed to create special offer"
+    special_offer = special_offer_response.json()
+
+    # Action: Delete the SpecialOffer
+    delete_response = await async_client.delete(f"/special_offer/{special_offer['id']}")
+    assert (
+        delete_response.status_code == 204
+    ), "Deletion did not return expected 204 No Content status"
+
+    # Verification: Attempt to fetch the deleted SpecialOffer
+    fetch_response = await async_client.get(f"/special_offer/{special_offer['id']}")
+    assert (
+        fetch_response.status_code == 404
+    ), "Fetching deleted special offer did not return expected 404 Not Found status"

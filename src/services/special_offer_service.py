@@ -7,7 +7,7 @@ from sqlalchemy.exc import NoResultFound, IntegrityError, SQLAlchemyError
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from src.models.special_offer import SpecialOffer
-from src.schemas.special_offer import SpecialOfferCreate
+from src.schemas.special_offer import SpecialOfferCreate, SpecialOfferUpdate
 
 
 async def create_special_offer_service(
@@ -51,22 +51,34 @@ async def get_all_special_offer_service(session: AsyncSession) -> List[SpecialOf
 
 
 async def update_special_offer_service(
-    session: AsyncSession, special_offer_id: UUID, special_offer_data: SpecialOffer
+    session: AsyncSession,
+    special_offer_id: UUID,
+    special_offer_update_data: dict,
 ) -> Optional[SpecialOffer]:
     try:
         special_offer = await session.get(SpecialOffer, special_offer_id)
-        if special_offer:
-            special_offer_data.id = special_offer_id  # Ensure ID remains unchanged
-            await session.merge(special_offer_data)
-            await session.commit()
-            return special_offer_data
+        if not special_offer:
+            raise HTTPException(status_code=404, detail="Special offer not found")
+
+        update_data_dict = special_offer_update_data
+        for key, value in update_data_dict.items():
+            if hasattr(special_offer, key):
+                setattr(special_offer, key, value)
+
+        await session.commit()
+        await session.refresh(special_offer)
+        return special_offer
     except NoResultFound as e:
-        raise HTTPException(status_code=404, detail=str(e))
+        await session.rollback()
+        raise HTTPException(status_code=404, detail="Special offer not found")
     except SQLAlchemyError as e:
+        await session.rollback()
         raise HTTPException(status_code=500, detail=str(e))
 
 
-async def delete_special_offer_service(session: AsyncSession, special_offer_id: UUID) -> bool:
+async def delete_special_offer_service(
+    session: AsyncSession, special_offer_id: UUID
+) -> bool:
     try:
         special_offer = await session.get(SpecialOffer, special_offer_id)
         if special_offer:

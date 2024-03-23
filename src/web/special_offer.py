@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Depends, status
+from fastapi import APIRouter, HTTPException, Depends, status, Response
 from sqlmodel import SQLModel, Field, Relationship
 from typing import List, Optional
 from uuid import UUID, uuid4
@@ -14,7 +14,7 @@ from src.services.special_offer_service import (
 )
 
 from src.models.special_offer import SpecialOffer
-from src.schemas.special_offer import SpecialOfferCreate
+from src.schemas.special_offer import SpecialOfferCreate, SpecialOfferUpdate
 
 
 router = APIRouter(prefix="/special_offer", tags=["special_offer"])
@@ -59,11 +59,12 @@ async def get_special_offer_endpoint(
 @router.put("/{special_offer_id}", response_model=SpecialOffer)
 async def update_special_offer_endpoint(
     special_offer_id: UUID,
-    special_offer: SpecialOffer,
+    special_offer_update: SpecialOfferUpdate,
     session: AsyncSession = Depends(get_session),
 ) -> SpecialOffer:
+    update_data_dict = special_offer_update.model_dump(exclude_unset=True)
     updated_special_offer = await update_special_offer_service(
-        session, special_offer_id, special_offer
+        session, special_offer_id, update_data_dict
     )
     if not updated_special_offer:
         raise HTTPException(
@@ -72,7 +73,12 @@ async def update_special_offer_endpoint(
     return updated_special_offer
 
 
-@router.delete("/{special_offer_id}", response_model=SpecialOffer)
+@router.delete(
+    "/{special_offer_id}",
+    response_model=SpecialOffer,
+    response_class=Response,
+    status_code=status.HTTP_204_NO_CONTENT,
+)
 async def delete_special_offer_endpoint(
     special_offer_id: UUID, session: AsyncSession = Depends(get_session)
 ) -> SpecialOffer:
@@ -81,4 +87,4 @@ async def delete_special_offer_endpoint(
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Special offer not found"
         )
-    return special_offer
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
