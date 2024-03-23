@@ -73,18 +73,11 @@ async def update_special_offer_endpoint(
     return updated_special_offer
 
 
-@router.delete(
-    "/{special_offer_id}",
-    response_model=SpecialOffer,
-    response_class=Response,
-    status_code=status.HTTP_204_NO_CONTENT,
-)
+@router.delete("/{special_offer_id}", status_code=204)
 async def delete_special_offer_endpoint(
     special_offer_id: UUID, session: AsyncSession = Depends(get_session)
-) -> SpecialOffer:
-    special_offer = await delete_special_offer_service(session, special_offer_id)
-    if not special_offer:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Special offer not found"
-        )
-    return Response(status_code=status.HTTP_204_NO_CONTENT)
+):
+    success = await delete_special_offer_service(session, special_offer_id)
+    if not success:
+        raise HTTPException(status_code=404, detail="Special offer not found")
+    return Response(status_code=204)

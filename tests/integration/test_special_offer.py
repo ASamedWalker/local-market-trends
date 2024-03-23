@@ -188,39 +188,36 @@ async def test_update_special_offer(async_client: AsyncClient):
 
 @pytest.mark.asyncio
 async def test_delete_special_offer(async_client: AsyncClient):
-    # Setup: Create a GroceryItem required for the SpecialOffer
+    # Create a GroceryItem first to link with the SpecialOffer
     grocery_item_data = {
-        "name": "Banana",
-        "description": "Rich in potassium",
+        "name": "Apple",
+        "description": "A sweet apple",
         "category": "Fruit",
     }
     grocery_item_response = await async_client.post(
         "/grocery_item/", json=grocery_item_data
     )
-    assert grocery_item_response.status_code == 200, "Failed to create grocery item"
+    assert grocery_item_response.status_code == 200
     grocery_item = grocery_item_response.json()
 
-    # Setup: Create a SpecialOffer linked to the GroceryItem
+    # Create a SpecialOffer linked to the GroceryItem
     special_offer_data = {
         "grocery_item_id": grocery_item["id"],
-        "description": "10% off!",
-        "valid_from": datetime.now().isoformat(),
-        "valid_to": (datetime.now() + timedelta(days=10)).isoformat(),
+        "description": "20% off!",
+        "valid_from": datetime.now().date().isoformat(),
+        "valid_to": (datetime.now().date() + timedelta(days=15)).isoformat(),
     }
     special_offer_response = await async_client.post(
         "/special_offer/", json=special_offer_data
     )
-    assert special_offer_response.status_code == 200, "Failed to create special offer"
+    assert special_offer_response.status_code == 200
     special_offer = special_offer_response.json()
 
-    # Action: Delete the SpecialOffer
+    # Delete the SpecialOffer
     delete_response = await async_client.delete(f"/special_offer/{special_offer['id']}")
-    assert (
-        delete_response.status_code == 204
-    ), "Deletion did not return expected 204 No Content status"
+    assert delete_response.status_code == 204
 
-    # Verification: Attempt to fetch the deleted SpecialOffer
-    fetch_response = await async_client.get(f"/special_offer/{special_offer['id']}")
-    assert (
-        fetch_response.status_code == 404
-    ), "Fetching deleted special offer did not return expected 404 Not Found status"
+    # Attempt to retrieve the deleted SpecialOffer
+    get_response = await async_client.get(f"/special_offer/{special_offer['id']}")
+    assert get_response.status_code == 404
+    assert get_response.json() == {"detail": "Special offer not found"}
