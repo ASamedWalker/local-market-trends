@@ -1,5 +1,5 @@
 import pytest
-from unittest.mock import AsyncMock
+from unittest.mock import AsyncMock, patch
 from httpx._transports.asgi import ASGITransport
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
@@ -47,53 +47,90 @@ def mock_session(mocker):
 
 
 @pytest.mark.asyncio
+async def test_create_grocery_item(async_client, mock_session):
+    fixed_uuid = UUID("12345678-1234-5678-1234-567812345678")
+    grocery_item_data = {
+        "id": str(fixed_uuid),
+        "name": "Milk",
+        "description": "A gallon of milk",
+        "category": "Dairy",
+        "image_url": None,
+    }
+
+    mock_session.execute.return_value.scalar.return_value.first.return_value = (
+        grocery_item_data
+    )
+    with patch("uuid.uuid4", return_value=fixed_uuid):
+
+        response = await async_client.post("/grocery_items/", json=grocery_item_data)
+
+        assert response.status_code == 200
+        response_data = response.json()
+        assert response_data["name"] == grocery_item_data["name"]
+        assert response_data["description"] == grocery_item_data["description"]
+        assert response_data["category"] == grocery_item_data["category"]
+        assert response_data["id"] == str(fixed_uuid)
+        assert response_data["image_url"] is None
+
+
+@pytest.mark.asyncio
+async def test_get_grocery_item(async_client, mock_session):
+    fixed_uuid = UUID("12345678-1234-5678-1234-567812345678")
+    mock_item_data = {
+        "id": str(fixed_uuid),
+        "name": "Milk",
+        "description": "A gallon of milk",
+        "category": "Dairy",
+        "image_url": None,
+    }
+
+    mock_session.get.return_value = mock_item_data
+
+    with patch("uuid.uuid4", return_value=fixed_uuid):
+        mock_item_id = str(fixed_uuid)
+        response = await async_client.get(f"/grocery_items/{mock_item_id}")
+        assert response.status_code == 200
+        assert response.json() == mock_item_data
+
+
+@pytest.mark.asyncio
 async def test_get_all_grocery_items(async_client, mock_session):
-    """Test the get_all_grocery_items endpoint"""
-    mock_session.execute.return_value.scalars.return_value.all.return_value = []
+    fixed_uuid = UUID("12345678-1234-5678-1234-567812345678")
+    mock_item_data = {
+        "id": str(fixed_uuid),
+        "name": "Milk",
+        "description": "A gallon of milk",
+        "category": "Dairy",
+        "image_url": None,
+    }
+
+    mock_session.execute.return_value.scalars.return_value.all.return_value = [
+        mock_item_data
+    ]
 
     response = await async_client.get("/grocery_items/")
     assert response.status_code == 200
-    assert response.json() == []
+    assert response.json() == [mock_item_data]
 
 
-async def test_create_grocery_item(async_client, mock_session):
-    # Assuming `items_data` is the expected subset of the GroceryItem fields
-    items_data = {
-        "id": str(uuid4()),
-        "name": "Milk",
-        "description": "A gallon of milk",
-        "category": "Dairy",
-    }
-    # Your existing setup code here...
-
-    response = await async_client.post("/grocery_items/", json=items_data)
-    assert response.status_code == 200
-    response_data = response.json()
-
-    # Adjusting assertion to compare relevant fields only
-    for key in items_data:
-        assert response_data[key] == items_data[key]
-
-
-# Implementing a test for the grocery item endpoint using unnitest.mock.AsyncMock
 @pytest.mark.asyncio
-async def test_get_grocery_item(async_client, mock_session):
-    # FAILED tests/unit/web/test_groceryitem_endpoint.py::test_get_grocery_item - assert 404 == 200
-    grocery_item_id = str(uuid4())
-    items_data = {
-        "id": grocery_item_id,
+async def test_update_grocery_item(async_client, mock_session):
+    fixed_uuid = UUID("12345678-1234-5678-1234-567812345678")
+    update_data = {
+        "id": str(fixed_uuid),
         "name": "Milk",
         "description": "A gallon of milk",
         "category": "Dairy",
+        "image_url": None,
     }
 
-    mock_session.execute.return_value.scalars.return_value.first.return_value = items_data
+    mock_session.get.return_value = GroceryItem(**update_data)
 
-    response = await async_client.get(f"/grocery_items/{grocery_item_id}")
+    response = await async_client.put(
+        f"/grocery_items/{update_data['id']}", json=update_data
+    )
     assert response.status_code == 200
-    assert response.json() == items_data
     response_data = response.json()
-    assert response_data["id"] == grocery_item_id
-    assert response_data["name"] == "Milk"
-    assert response_data["description"] == "A gallon of milk"
-    assert response_data["category"] == "Dairy"
+    assert response_data["name"] == update_data["name"]
+    assert response_data["description"] == update_data["description"]
+    assert response_data["category"] == update_data["category"]
