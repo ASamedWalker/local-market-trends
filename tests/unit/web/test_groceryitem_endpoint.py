@@ -1,5 +1,5 @@
 import pytest
-from unittest.mock import AsyncMock, patch
+from unittest.mock import AsyncMock, patch, ANY
 from httpx._transports.asgi import ASGITransport
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
@@ -7,6 +7,7 @@ from src.data.database import get_session
 from httpx import AsyncClient
 from sqlmodel import SQLModel
 from src.models.all_models import GroceryItem
+from src.services.grocery_item_service import update_grocery_item
 from uuid import UUID, uuid4
 
 from src.main import app
@@ -114,23 +115,53 @@ async def test_get_all_grocery_items(async_client, mock_session):
 
 
 @pytest.mark.asyncio
-async def test_update_grocery_item(async_client, mock_session):
+async def test_update_grocery_item(async_client, mocker):
     fixed_uuid = UUID("12345678-1234-5678-1234-567812345678")
-    update_data = {
+    original_item_data = {
         "id": str(fixed_uuid),
         "name": "Milk",
         "description": "A gallon of milk",
         "category": "Dairy",
         "image_url": None,
     }
+    updated_item_data = {
+        "id": str(fixed_uuid),
+        "name": "Almond Milk",
+        "description": "A gallon of almond milk",
+        "category": "Dairy",
+        "image_url": None,
+    }
 
-    mock_session.get.return_value = GroceryItem(**update_data)
+    mock_update_grocery_item = mocker.patch(
+        "src.web.grocery_item.update_grocery_item", return_value=updated_item_data
+    )
 
     response = await async_client.put(
-        f"/grocery_items/{update_data['id']}", json=update_data
+        f"/grocery_items/{str(fixed_uuid)}", json=updated_item_data
     )
     assert response.status_code == 200
-    response_data = response.json()
-    assert response_data["name"] == update_data["name"]
-    assert response_data["description"] == update_data["description"]
-    assert response_data["category"] == update_data["category"]
+    assert response.json() == updated_item_data
+    mock_update_grocery_item.assert_called_once_with(ANY, fixed_uuid, updated_item_data)
+
+
+@pytest.mark.asyncio
+async def test_update_grocery_item_not_found(async_client, mocker):
+    fixed_uuid = UUID("12345678-1234-5678-1234-567812345678")
+    updated_item_data = {
+        "id": str(fixed_uuid),
+        "name": "Almond Milk",
+        "description": "A gallon of almond milk",
+        "category": "Dairy",
+        "image_url": None,
+    }
+
+    mock_update_grocery_item = mocker.patch(
+        "src.web.grocery_item.update_grocery_item", return_value=None
+    )
+
+    response = await async_client.put(
+        f"/grocery_items/{str(fixed_uuid)}", json=updated_item_data
+    )
+    assert response.status_code == 404
+    assert response.json() == {"detail": "Grocery item not found"}
+    mock_update_grocery_item.assert_called_once_with(ANY, fixed_uuid, updated_item_data)

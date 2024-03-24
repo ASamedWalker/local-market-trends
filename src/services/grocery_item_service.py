@@ -59,6 +59,15 @@ async def get_all_grocery_items(session: AsyncSession) -> List[GroceryItem]:
 async def update_grocery_item(
     session: AsyncSession, grocery_item_id: UUID, grocery_item_data: dict
 ) -> Optional[GroceryItem]:
+    # Validate grocery_item_data
+    if not isinstance(grocery_item_data, dict):
+        raise HTTPException(
+            status_code=400, detail="grocery_item_data must be a dictionary"
+        )
+    for key in grocery_item_data:
+        if not hasattr(GroceryItem, key):
+            raise HTTPException(status_code=400, detail=f"Invalid key: {key}")
+
     try:
         grocery_item = await session.get(GroceryItem, grocery_item_id)
         if not grocery_item:
@@ -68,9 +77,17 @@ async def update_grocery_item(
             setattr(grocery_item, key, value)
 
         await session.commit()
-        return grocery_item
-    except SQLAlchemyError:
+        return grocery_item.model_dump()
+    except IntegrityError as e:
         await session.rollback()
+        logger.error(f"Failed to update grocery item due to constraint violation: {e}")
+        raise HTTPException(
+            status_code=400,
+            detail="Failed to update grocery item due to constraint violation",
+        )
+    except SQLAlchemyError as e:
+        await session.rollback()
+        logger.error(f"Failed to update grocery item: {e}")
         raise HTTPException(status_code=500, detail="A database error occurred")
 
 

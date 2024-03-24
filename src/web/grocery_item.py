@@ -50,8 +50,11 @@ async def update_grocery_item_endpoint(
     grocery_item: GroceryItem,
     session: AsyncSession = Depends(get_session),
 ) -> GroceryItem:
+
+    grocery_item_dict = grocery_item.model_dump()
+
     updated_grocery_item = await update_grocery_item(
-        session, grocery_item_id, grocery_item
+        session, grocery_item_id, grocery_item_dict
     )
     if not updated_grocery_item:
         raise HTTPException(
