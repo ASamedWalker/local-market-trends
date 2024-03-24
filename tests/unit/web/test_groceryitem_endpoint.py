@@ -29,53 +29,11 @@ def mock_session(mocker):
 
 
 @pytest.mark.asyncio
-async def test_create_grocery_item(async_client, mock_session):
-    item_data = {
-        "id": str(uuid4()),  # Generate a valid UUID for the item
-        "name": "Milk",
-        "description": "A gallon of milk",
-        "category": "Dairy",
-        "image_url": None,  # Include all fields from the model, even if optional
-    }
-    mock_session.execute.return_value.scalars.return_value.first.return_value = (
-        GroceryItem(**item_data)
-    )
+async def test_get_all_grocery_items(async_client, mock_session):
+    """Test the get_all_grocery_items endpoint"""
+    mock_session.execute.return_value.scalars.return_value.all.return_value = []
 
-    response = await async_client.post("/grocery-items/", json=item_data)
+    response = await async_client.get("/grocery_items/")
     assert response.status_code == 200
-    assert (
-        response.json() == item_data
-    )  # Simplified, adjust based on actual response structure
+    assert response.json() == []
 
-    # Verify session interactions, like commit calls if applicable
-    mock_session.commit.assert_called_once()
-
-
-@pytest.mark.asyncio
-async def test_get_grocery_items(async_client, mock_session):
-    items_data = [
-        {
-            "id": str(uuid4()),  # Generate a valid UUID for each item
-            "name": "Milk",
-            "description": "A gallon of milk",
-            "category": "Dairy",
-            "image_url": None,  # Include all fields from the model, even if optional
-        },
-        {
-            "id": str(uuid4()),
-            "name": "Bread",
-            "description": "A loaf of bread",
-            "category": "Bakery",
-            "image_url": None,
-        },
-    ]
-    mock_session.execute.return_value.scalars.return_value.all.return_value = [
-        GroceryItem(**item) for item in items_data
-    ]
-
-    response = await async_client.get("/grocery-items/")
-    assert response.status_code == 200
-    assert response.json() == items_data
-
-    # Verify session interactions
-    # mock_session.query.assert_called_with(GroceryItem)

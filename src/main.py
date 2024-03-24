@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from contextlib import asynccontextmanager
 from src.web import (
     grocery_item,
@@ -7,6 +7,10 @@ from src.web import (
     special_offer,
 )
 from src.data.database import create_db_and_tables
+from sqlalchemy.exc import SQLAlchemyError
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 # Assuming you have a hypothetical function to load and unload resources
@@ -29,6 +33,13 @@ async def app_lifespan(app: FastAPI):
 
 
 app = FastAPI(lifespan=app_lifespan)
+
+
+@app.exception_handler(SQLAlchemyError)
+async def sqlalchemy_exception_handler(request, exc):
+    # Log the error or send it to an error tracking system
+    logger.error(f"SQLAlchemyError occurred: {exc}")
+    return HTTPException(status_code=500, detail="A database error occurred")
 
 
 app.include_router(grocery_item.router)

@@ -5,10 +5,13 @@ from uuid import UUID
 from sqlmodel import select
 from sqlalchemy.exc import NoResultFound, IntegrityError, SQLAlchemyError
 from sqlmodel.ext.asyncio.session import AsyncSession
+import logging
 
 # import fake.market as market_db
 
 from src.models.all_models import Market
+
+logger = logging.getLogger(__name__)
 
 
 async def create_market(session: AsyncSession, market: Market) -> Market:

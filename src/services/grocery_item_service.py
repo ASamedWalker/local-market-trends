@@ -5,9 +5,12 @@ from uuid import UUID
 from sqlmodel import select
 from sqlalchemy.exc import NoResultFound, IntegrityError, SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
+import logging
 
 
 from src.models.all_models import GroceryItem
+
+logger = logging.getLogger(__name__)
 
 
 async def create_grocery_item(
@@ -15,11 +18,11 @@ async def create_grocery_item(
 ) -> GroceryItem:
     try:
         session.add(grocery_item)
-        print("session has been added")
+        logging.info("session has been added")
         await session.commit()
-        print("session has been committed")
+        logging.info("session has been committed")
         await session.refresh(grocery_item)
-        print("session has been refreshed")
+        logging.info("session has been refreshed")
         return grocery_item
     except IntegrityError as e:
         await session.rollback()
@@ -53,19 +56,21 @@ async def get_all_grocery_items(session: AsyncSession) -> List[GroceryItem]:
 
 
 async def update_grocery_item(
-    session: AsyncSession, grocery_item_id: UUID, grocery_item_data: GroceryItem
+    session: AsyncSession, grocery_item_id: UUID, grocery_item_data: dict
 ) -> Optional[GroceryItem]:
     try:
         grocery_item = await session.get(GroceryItem, grocery_item_id)
-        if grocery_item:
-            grocery_item_data.id = grocery_item_id
-            await session.merge(grocery_item_data)
-            await session.commit()
-            return await session.get(GroceryItem, grocery_item_id)
-        return None
-    except SQLAlchemyError as e:
+        if not grocery_item:
+            raise HTTPException(status_code=404, detail="Grocery item not found")
+
+        for key, value in grocery_item_data.items():
+            setattr(grocery_item, key, value)
+
+        await session.commit()
+        return grocery_item
+    except SQLAlchemyError:
         await session.rollback()
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail="A database error occurred")
 
 
 async def delete_grocery_item(
@@ -77,7 +82,8 @@ async def delete_grocery_item(
             await session.delete(grocery_item)
             await session.commit()
             return grocery_item
-        return None
-    except SQLAlchemyError as e:
+        else:
+            raise HTTPException(status_code=404, detail="Grocery item not found")
+    except SQLAlchemyError:
         await session.rollback()
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail="A database error occurred")
