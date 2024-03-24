@@ -1,10 +1,12 @@
 import pytest
 from unittest.mock import AsyncMock
-from src.main import app
 from httpx._transports.asgi import ASGITransport
 from sqlalchemy.ext.asyncio import AsyncSession
 from httpx import AsyncClient
-from src.models.grocery_item import GroceryItem
+from src.models.all_models import GroceryItem
+from uuid import UUID, uuid4
+
+from src.main import app
 
 
 # Implementing a test for the grocery item endpoint using unnitest.mock.AsyncMock
@@ -28,7 +30,13 @@ def mock_session(mocker):
 
 @pytest.mark.asyncio
 async def test_create_grocery_item(async_client, mock_session):
-    item_data = {"name": "Milk", "description": "A gallon of milk", "category": "Dairy"}
+    item_data = {
+        "id": str(uuid4()),  # Generate a valid UUID for the item
+        "name": "Milk",
+        "description": "A gallon of milk",
+        "category": "Dairy",
+        "image_url": None,  # Include all fields from the model, even if optional
+    }
     mock_session.execute.return_value.scalars.return_value.first.return_value = (
         GroceryItem(**item_data)
     )
@@ -47,16 +55,18 @@ async def test_create_grocery_item(async_client, mock_session):
 async def test_get_grocery_items(async_client, mock_session):
     items_data = [
         {
-            "id": 1,
+            "id": str(uuid4()),  # Generate a valid UUID for each item
             "name": "Milk",
             "description": "A gallon of milk",
             "category": "Dairy",
+            "image_url": None,  # Include all fields from the model, even if optional
         },
         {
-            "id": 2,
+            "id": str(uuid4()),
             "name": "Bread",
             "description": "A loaf of bread",
             "category": "Bakery",
+            "image_url": None,
         },
     ]
     mock_session.execute.return_value.scalars.return_value.all.return_value = [

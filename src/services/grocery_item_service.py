@@ -7,7 +7,7 @@ from sqlalchemy.exc import NoResultFound, IntegrityError, SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 
-from src.models.grocery_item import GroceryItem
+from src.models.all_models import GroceryItem
 
 
 async def create_grocery_item(
@@ -58,7 +58,7 @@ async def update_grocery_item(
     try:
         grocery_item = await session.get(GroceryItem, grocery_item_id)
         if grocery_item:
-            grocery_item_data.id = grocery_item_id  
+            grocery_item_data.id = grocery_item_id
             await session.merge(grocery_item_data)
             await session.commit()
             return await session.get(GroceryItem, grocery_item_id)

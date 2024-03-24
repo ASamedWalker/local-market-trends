@@ -12,7 +12,7 @@ from src.services.market_service import (
 )
 
 
-from src.models.market import Market
+from src.models.all_models import Market
 
 router = APIRouter(prefix="/market", tags=["market"])
 

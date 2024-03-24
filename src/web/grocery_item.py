@@ -12,7 +12,7 @@ from src.services.grocery_item_service import (
 )
 
 
-from src.models.grocery_item import GroceryItem
+from src.models.all_models import GroceryItem
 
 
 router = APIRouter(prefix="/grocery_items", tags=["grocery_items"])

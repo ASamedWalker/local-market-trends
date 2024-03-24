@@ -13,7 +13,7 @@ from src.services.special_offer_service import (
     delete_special_offer_service,
 )
 
-from src.models.special_offer import SpecialOffer
+from src.models.all_models import SpecialOffer
 from src.schemas.special_offer import SpecialOfferCreate, SpecialOfferUpdate
 
 

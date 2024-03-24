@@ -6,7 +6,7 @@ from sqlmodel import select
 from sqlalchemy.exc import NoResultFound, IntegrityError, SQLAlchemyError
 from sqlmodel.ext.asyncio.session import AsyncSession
 
-from src.models.special_offer import SpecialOffer
+from src.models.all_models import SpecialOffer
 from src.schemas.special_offer import SpecialOfferCreate, SpecialOfferUpdate
 
 
