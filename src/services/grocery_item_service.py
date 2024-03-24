@@ -52,7 +52,8 @@ async def get_all_grocery_items(session: AsyncSession) -> List[GroceryItem]:
         grocery_items = result.scalars().all()
         return grocery_items
     except SQLAlchemyError as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        logger.error(f"Failed to retrieve grocery items: {e}")
+    raise HTTPException(status_code=500, detail="Failed to retrieve grocery items")
 
 
 async def update_grocery_item(
