@@ -12,7 +12,7 @@ from src.data.database import create_db_and_tables
 # Assuming you have a hypothetical function to load and unload resources
 def load_resources():
     print("Loading resources...")
-    # Code to load your resources, e.g., ML models, database connections, etc.
+    # Code to load your resources, e.g. database connections, etc.
 
 
 def unload_resources():
@@ -22,7 +22,7 @@ def unload_resources():
 
 @asynccontextmanager
 async def app_lifespan(app: FastAPI):
-    create_db_and_tables()
+    await create_db_and_tables()
     load_resources()  # Load resources at startup
     yield  # Wait for the app to run
     unload_resources()  # Cleanup resources at shutdown

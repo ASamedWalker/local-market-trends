@@ -5,6 +5,7 @@ from datetime import datetime
 
 
 class SpecialOffer(SQLModel, table=True):
+    __tablename__ = "special_offer"
     id: Optional[UUID] = Field(default_factory=uuid4, primary_key=True)
     grocery_item_id: UUID = Field(foreign_key="groceryitem.id")
     description: str

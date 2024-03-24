@@ -15,7 +15,7 @@ from src.services.grocery_item_service import (
 from src.models.grocery_item import GroceryItem
 
 
-router = APIRouter(prefix="/grocery_item", tags=["grocery_item"])
+router = APIRouter(prefix="/grocery_items", tags=["grocery_items"])
 
 
 @router.post("/", response_model=GroceryItem)

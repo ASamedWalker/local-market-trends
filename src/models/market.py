@@ -5,6 +5,7 @@ from uuid import UUID, uuid4
 
 
 class Market(SQLModel, table=True):
+    __tablename__ = "market"
     id: Optional[UUID] = Field(default_factory=uuid4, primary_key=True)
     name: str = Field(index=True)
     location_description: Optional[str] = Field(default=None)

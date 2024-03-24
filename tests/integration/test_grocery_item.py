@@ -44,7 +44,7 @@ async def async_client():
 async def test_create_grocery_item(async_client):
     """Test creating a new grocery item"""
     response = await async_client.post(
-        "/grocery_item/",
+        "/grocery_items/",
         json={"name": "Apple", "description": "A sweet apple", "category": "Fruit"},
     )
     assert response.status_code == 200
@@ -65,7 +65,7 @@ async def test_get_grocery_item(async_client):
     """Test getting a grocery item"""
     # Create a new grocery item
     create_response = await async_client.post(
-        "/grocery_item/",
+        "/grocery_items/",
         json={"name": "Apple", "description": "A sweet apple", "category": "Fruit"},
     )
     assert create_response.status_code == 200
@@ -84,7 +84,7 @@ async def test_get_all_grocery_items(async_client):
     """Test getting all grocery items"""
     # Create a new grocery item
     create_response = await async_client.post(
-        "/grocery_item/",
+        "/grocery_items/",
         json={"name": "Apple", "description": "A sweet apple", "category": "Fruit"},
     )
     assert create_response.status_code == 200
@@ -102,7 +102,7 @@ async def test_update_grocery_item(async_client):
     """Test updating a grocery item"""
     # Create a new grocery item
     create_response = await async_client.post(
-        "/grocery_item/",
+        "/grocery_items/",
         json={"name": "Apple", "description": "A sweet apple", "category": "Fruit"},
     )
     assert create_response.status_code == 200
@@ -111,7 +111,7 @@ async def test_update_grocery_item(async_client):
 
     # Update the grocery item
     update_response = await async_client.put(
-        f"/grocery_item/{grocery_item_id}",
+        f"/grocery_items/{grocery_item_id}",
         json={"name": "Banana", "description": "A ripe banana", "category": "Fruit"},
     )
     assert update_response.status_code == 200
@@ -127,7 +127,7 @@ async def test_delete_grocery_item(async_client):
     """Test deleting a grocery item"""
     # Create a new grocery item
     create_response = await async_client.post(
-        "/grocery_item/",
+        "/grocery_items/",
         json={"name": "Apple", "description": "A sweet apple", "category": "Fruit"},
     )
     assert create_response.status_code == 200

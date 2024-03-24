@@ -5,6 +5,7 @@ from uuid import UUID, uuid4
 
 
 class PriceRecord(SQLModel, table=True):
+    __tablename__ = "price_record"
     id: Optional[UUID] = Field(default_factory=uuid4, primary_key=True)
     grocery_item_id: UUID = Field(foreign_key="groceryitem.id")
     market_id: UUID = Field(foreign_key="market.id")
