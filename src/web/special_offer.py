@@ -17,11 +17,11 @@ from src.models.all_models import SpecialOffer
 from src.schemas.special_offer import SpecialOfferCreate, SpecialOfferUpdate
 
 
-router = APIRouter(prefix="/special_offer", tags=["special_offer"])
+router = APIRouter(prefix="/special_offers", tags=["special_offers"])
 
 
 @router.post("/", response_model=SpecialOffer)
-async def create_special_offer_endpoint(
+async def create_special_offer(
     special_offer_data: SpecialOfferCreate, session: AsyncSession = Depends(get_session)
 ) -> SpecialOffer:
     try:
@@ -45,7 +45,7 @@ async def get_all_special_offers_endpoint(
 
 
 @router.get("/{special_offer_id}", response_model=SpecialOffer)
-async def get_special_offer_endpoint(
+async def get_special_offer(
     special_offer_id: UUID, session: AsyncSession = Depends(get_session)
 ) -> SpecialOffer:
     special_offer = await get_special_offer_service(session, special_offer_id)
@@ -57,7 +57,7 @@ async def get_special_offer_endpoint(
 
 
 @router.put("/{special_offer_id}", response_model=SpecialOffer)
-async def update_special_offer_endpoint(
+async def update_special_offer(
     special_offer_id: UUID,
     special_offer_update: SpecialOfferUpdate,
     session: AsyncSession = Depends(get_session),
@@ -74,7 +74,7 @@ async def update_special_offer_endpoint(
 
 
 @router.delete("/{special_offer_id}", status_code=204)
-async def delete_special_offer_endpoint(
+async def delete_special_offer(
     special_offer_id: UUID, session: AsyncSession = Depends(get_session)
 ):
     success = await delete_special_offer_service(session, special_offer_id)

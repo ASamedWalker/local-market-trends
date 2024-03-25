@@ -16,7 +16,7 @@ from typing import Optional, List
 from src.models.all_models import PriceRecord
 
 
-router = APIRouter(prefix="/price_record", tags=["price_record"])
+router = APIRouter(prefix="/price_records", tags=["price_records"])
 
 
 @router.post("/", response_model=PriceRecord)

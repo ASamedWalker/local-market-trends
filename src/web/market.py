@@ -14,7 +14,7 @@ from src.services.market_service import (
 
 from src.models.all_models import Market
 
-router = APIRouter(prefix="/market", tags=["market"])
+router = APIRouter(prefix="/markets", tags=["markets"])
 
 
 @router.post("/", response_model=Market)

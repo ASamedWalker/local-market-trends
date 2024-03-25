@@ -46,8 +46,8 @@ class SpecialOffer(SQLModel, table=True):
     id: Optional[UUID] = Field(default_factory=uuid4, primary_key=True)
     grocery_item_id: Optional[UUID] = Field(foreign_key="grocery_item.id")
     description: str
-    valid_from: datetime
-    valid_to: datetime
+    valid_from: datetime = Field(default_factory=datetime.utcnow)
+    valid_to: datetime = Field(default_factory=datetime.utcnow)
     image_url: Optional[str] = None
 
     # Ensure that valid_from is before valid_to
