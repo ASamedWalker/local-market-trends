@@ -2,8 +2,8 @@ from fastapi import APIRouter, HTTPException, Depends, status
 from typing import Optional, List
 from uuid import UUID
 from sqlmodel.ext.asyncio.session import AsyncSession
-from src.data.database import get_session
-from src.services.market_service import (
+from data.database import get_session
+from services.market_service import (
     create_market,
     get_market,
     get_all_markets,
@@ -12,7 +12,7 @@ from src.services.market_service import (
 )
 
 
-from src.models.all_models import Market
+from models.all_models import Market
 
 router = APIRouter(prefix="/markets", tags=["markets"])
 

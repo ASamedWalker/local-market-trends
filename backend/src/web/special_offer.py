@@ -4,8 +4,8 @@ from typing import List, Optional
 from uuid import UUID, uuid4
 from datetime import datetime
 from sqlalchemy.ext.asyncio.session import AsyncSession
-from src.data.database import get_session
-from src.services.special_offer_service import (
+from data.database import get_session
+from services.special_offer_service import (
     create_special_offer_service,
     get_all_special_offer_service,
     get_special_offer_service,
@@ -13,8 +13,8 @@ from src.services.special_offer_service import (
     delete_special_offer_service,
 )
 
-from src.models.all_models import SpecialOffer
-from src.schemas.special_offer import SpecialOfferCreate, SpecialOfferUpdate
+from models.all_models import SpecialOffer
+from schemas.special_offer import SpecialOfferCreate, SpecialOfferUpdate
 
 
 router = APIRouter(prefix="/special_offers", tags=["special_offers"])

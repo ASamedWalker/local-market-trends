@@ -9,7 +9,7 @@ import logging
 
 # import fake.market as market_db
 
-from src.models.all_models import Market
+from models.all_models import Market
 
 logger = logging.getLogger(__name__)
 

@@ -1,12 +1,12 @@
 from fastapi import FastAPI, HTTPException
 from contextlib import asynccontextmanager
-from src.web import (
+from web import (
     grocery_item,
     market,
     price_record,
     special_offer,
 )
-from src.data.database import create_db_and_tables
+from data.database import create_db_and_tables
 from sqlalchemy.exc import SQLAlchemyError
 import logging
 

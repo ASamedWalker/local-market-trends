@@ -7,7 +7,7 @@ from typing import List, Optional
 from uuid import UUID
 
 
-from src.models.all_models import PriceRecord
+from models.all_models import PriceRecord
 
 
 async def create_price_record(

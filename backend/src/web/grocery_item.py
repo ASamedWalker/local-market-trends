@@ -2,8 +2,8 @@ from fastapi import APIRouter, HTTPException, Depends, status
 from typing import Optional, List
 from uuid import UUID
 from sqlmodel.ext.asyncio.session import AsyncSession
-from src.data.database import get_session
-from src.services.grocery_item_service import (
+from data.database import get_session
+from services.grocery_item_service import (
     create_grocery_item,
     get_grocery_item,
     get_all_grocery_items,
@@ -12,7 +12,7 @@ from src.services.grocery_item_service import (
 )
 
 
-from src.models.all_models import GroceryItem
+from models.all_models import GroceryItem
 
 
 router = APIRouter(prefix="/grocery_items", tags=["grocery_items"])
