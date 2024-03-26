@@ -1,6 +1,6 @@
-# Local Market Trend App
+# Local Market Trends App Backend Documentation
 
-## Description
+## Overview
 
 This app is designed to help users find the best local markets in their area. It will provide information on the market's location, hours of operation, and the types of products available. Users will also be able to leave reviews and ratings for the markets they visit.
 
