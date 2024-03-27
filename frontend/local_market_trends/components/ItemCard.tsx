@@ -22,14 +22,16 @@ const ItemCard = ({ name, price, imageUrl, offer }: ItemCardProps) => {
           objectFit="cover"
         />
 
-        <div className="px-6 py-4">
-          <div className="font-bold text-xl mb-2">{name}</div>
-          <p className="text-gray-700 text-base flex-grow">{price}</p>
-          {offer && (
-            <span className="bg-red-100 text-red-800 text-sm font-semibold mr-2 px-2.5 py-0.5 rounded dark:bg-red-200 dark:text-red-900">
-              {offer}
-            </span>
-          )}
+        <div className="px-6 py-4 flex-grow flex flex-col justify-between">
+          <h3 className="font-bold text-xl mb-2">{name}</h3>
+          <div className="flex items-center justify-between">
+            <p className="text-lg font-semibold text-gray-800">{price}</p>
+            {offer && (
+              <span className="bg-red-100 bg-red-600 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded-full text-white dark:bg-red-200 dark:text-red-900">
+                {offer}
+              </span>
+            )}
+          </div>
         </div>
       </div>
     </Link>
