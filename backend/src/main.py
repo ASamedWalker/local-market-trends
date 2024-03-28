@@ -1,4 +1,5 @@
 from fastapi import FastAPI, HTTPException
+from fastapi.staticfiles import StaticFiles
 from contextlib import asynccontextmanager
 from web import (
     grocery_item,
@@ -33,6 +34,7 @@ async def app_lifespan(app: FastAPI):
 
 
 app = FastAPI(lifespan=app_lifespan)
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 
 @app.exception_handler(SQLAlchemyError)
