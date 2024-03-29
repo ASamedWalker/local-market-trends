@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Depends, status
+from fastapi import APIRouter, HTTPException, Depends, status, Query
 from typing import Optional, List
 from uuid import UUID
 from sqlmodel.ext.asyncio.session import AsyncSession
@@ -73,3 +73,12 @@ async def delete_grocery_item_endpoint(
             status_code=status.HTTP_404_NOT_FOUND, detail="Grocery item not found"
         )
     return deleted_grocery_item
+
+@router.get("/search/", response_model=List[GroceryItem])
+async def search_grocery_items(q: str = Query(None, min_length=3), session: AsyncSession = Depends(get_session)):
+    query = f"%{q}%"
+    result = await session.execute(select(GroceryItem).where(GroceryItem.name.like(query) | GroceryItem.description.like(query)))
+    items = result.scalars().all()
+    if not items:
+        raise HTTPException(status_code=404, detail="Items not found")
+    return items
