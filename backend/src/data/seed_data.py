@@ -60,5 +60,14 @@ grocery_items_seed_data = [
         "category": "Nuts & Seeds",
         "image_url": "/static/images/almonds.jpg",
     },
-    # Add more items as needed
+    
 ]
+
+
+market_seed_data = [
+    {"name": "Downtown Farmers' Market", "location_description": "Central square", "latitude": 40.712776, "longitude": -74.005974},
+    {"name": "Uptown Grocers", "location_description": "Near the north end park", "latitude": 40.785091, "longitude": -73.968285},
+]
+
+
+
