@@ -226,7 +226,7 @@ special_offers_seed_data = [
         "description": "20% off on all fruits!",
         "valid_from": "2022-01-01T00:00:00Z",
         "valid_to": "2022-01-31T23:59:59Z",
-        "image_url": "/static/images/discounts/twenty-percent-off.png",
+        "image_url": "/static/images/discounts/twenty-percent-off.jpg",
     },
     # Add more special offers here
     {
@@ -234,56 +234,56 @@ special_offers_seed_data = [
         "description": "15% off on all fruits!",
         "valid_from": "2022-01-01T00:00:00Z",
         "valid_to": "2022-01-31T23:59:59Z",
-        "image_url": "/static/images/discounts/fifteen-percent-off.png",
+        "image_url": "/static/images/discounts/fifteen-percent-off.jpg",
     },
     {
         "grocery_item_id": "Carrots",
         "description": "25% off on all vegetables!",
         "valid_from": "2022-01-01T00:00:00Z",
         "valid_to": "2022-01-31T23:59:59Z",
-        "image_url": "/static/images/discounts/twenty-five-percent-off.png",
+        "image_url": "/static/images/discounts/twenty-five-percent.jpg",
     },
     {
         "grocery_item_id": "Tomatoes",
         "description": "15% off on all vegetables!",
         "valid_from": "2022-01-01T00:00:00Z",
         "valid_to": "2022-01-31T23:59:59Z",
-        "image_url": "/static/images/discounts/fifteen-percent-off.png",
+        "image_url": "/static/images/discounts/fifteen-percent-off.jpg",
     },
     {
         "grocery_item_id": "Whole Wheat Bread",
         "description": "Buy one get one free!",
         "valid_from": "2022-01-01T00:00:00Z",
         "valid_to": "2022-01-31T23:59:59Z",
-        "image_url": "/static/images/discounts/ten-percent-off.png",
+        "image_url": "/static/images/discounts/ten-percent-off.jpg",
     },
     {
         "grocery_item_id": "Orange Juice",
         "description": "20% off on all beverages!",
         "valid_from": "2022-01-01T00:00:00Z",
         "valid_to": "2022-01-31T23:59:59Z",
-        "image_url": "/static/images/discounts/twenty-percent-off.png",
+        "image_url": "/static/images/discounts/twenty-percent-off.jpg",
     },
     {
         "grocery_item_id": "Eggs",
         "description": "10% off on all dairy & eggs!",
         "valid_from": "2022-01-01T00:00:00Z",
         "valid_to": "2022-01-31T23:59:59Z",
-        "image_url": "/static/images/discounts/ten-percent-off.png",
+        "image_url": "/static/images/discounts/ten-percent-off.jpg",
     },
     {
         "grocery_item_id": "Milk",
         "description": "15% off on all dairy & eggs!",
         "valid_from": "2022-01-01T00:00:00Z",
         "valid_to": "2022-01-31T23:59:59Z",
-        "image_url": "/static/images/discounts/fifteen-percent-off.png",
+        "image_url": "/static/images/discounts/fifteen-percent-off.jpg",
     },
     {
         "grocery_item_id": "Cheddar Cheese",
         "description": "10% off on all dairy & eggs!",
         "valid_from": "2022-01-01T00:00:00Z",
         "valid_to": "2022-01-31T23:59:59Z",
-        "image_url": "/static/images/discounts/ten-percent-off.png",
+        "image_url": "/static/images/discounts/ten-percent-off.jpg",
     },
     # Add more special offers here
     {
@@ -291,7 +291,7 @@ special_offers_seed_data = [
         "description": "Buy one get one free!",
         "valid_from": "2022-01-01T00:00:00Z",
         "valid_to": "2022-01-31T23:59:59Z",
-        "image_url": "/static/images/discounts/buy-one-get-one-free.png",
+        "image_url": "/static/images/discounts/buy-1-get-1-free.jpg",
     },
     {
         "grocery_item_id": "Almonds",
@@ -302,17 +302,17 @@ special_offers_seed_data = [
     },
     {
         "grocery_item_id": "Almonds",
-        "description": "20% off on all nuts & seeds!",
+        "description": "25% off on all nuts & seeds!",
         "valid_from": "2022-01-01T00:00:00Z",
         "valid_to": "2022-01-31T23:59:59Z",
-        "image_url": "/static/images/discounts/twenty-percent-off.png",
+        "image_url": "/static/images/discounts/twenty-five-percent.jpg",
     },
     {
         "grocery_item_id": "Almonds",
         "description": "10% off on all nuts & seeds!",
         "valid_from": "2022-01-01T00:00:00Z",
         "valid_to": "2022-01-31T23:59:59Z",
-        "image_url": "/static/images/discounts/ten-percent-off.png",
+        "image_url": "/static/images/discounts/ten-percent-off.jpg",
     },
 
 ]
