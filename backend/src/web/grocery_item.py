@@ -2,6 +2,7 @@ from fastapi import APIRouter, HTTPException, Depends, status, Query
 from typing import Optional, List
 from uuid import UUID
 from sqlmodel.ext.asyncio.session import AsyncSession
+from sqlalchemy import select
 from data.database import get_session
 from services.grocery_item_service import (
     create_grocery_item,
@@ -75,7 +76,7 @@ async def delete_grocery_item_endpoint(
     return deleted_grocery_item
 
 @router.get("/search/", response_model=List[GroceryItem])
-async def search_grocery_items(q: str = Query(None, min_length=3), session: AsyncSession = Depends(get_session)):
+async def search_grocery_items(q: str = Query(None, max_length=20), session: AsyncSession = Depends(get_session)):
     query = f"%{q}%"
     result = await session.execute(select(GroceryItem).where(GroceryItem.name.like(query) | GroceryItem.description.like(query)))
     items = result.scalars().all()
