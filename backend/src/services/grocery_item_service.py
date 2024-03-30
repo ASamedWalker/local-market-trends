@@ -3,6 +3,7 @@ from fastapi import HTTPException
 from typing import List, Optional
 from uuid import UUID
 from sqlmodel import select
+from sqlalchemy.sql import func
 from sqlalchemy.exc import NoResultFound, IntegrityError, SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 import logging
@@ -55,6 +56,14 @@ async def get_all_grocery_items(session: AsyncSession) -> List[GroceryItem]:
         logger.error(f"Failed to retrieve grocery items: {e}")
     raise HTTPException(status_code=500, detail="Failed to retrieve grocery items")
 
+async def get_grocery_item_by_name(session: AsyncSession, name: str) -> Optional[GroceryItem]:
+    try:
+        result = await session.execute(select(GroceryItem).where(func.lower(GroceryItem.name) == func.lower(name)))
+        grocery_item = result.scalars().first()
+        return grocery_item
+    except SQLAlchemyError as e:
+        logger.error(f"Failed to retrieve grocery item by name: {e}")
+        raise HTTPException(status_code=500, detail="Failed to retrieve grocery item by name")
 
 async def update_grocery_item(
     session: AsyncSession, grocery_item_id: UUID, grocery_item_data: dict

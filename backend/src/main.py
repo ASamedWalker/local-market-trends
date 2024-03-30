@@ -8,6 +8,7 @@ from web import (
     market,
     price_record,
     special_offer,
+    products,
 )
 from data.database import create_db_and_tables
 from sqlalchemy.exc import SQLAlchemyError
@@ -59,6 +60,7 @@ async def sqlalchemy_exception_handler(request, exc):
 
 
 app.include_router(grocery_item.router)
+app.include_router(products.router)
 app.include_router(market.router)
 app.include_router(price_record.router)
 app.include_router(special_offer.router)
