@@ -1,35 +1,68 @@
 // components/ItemCard.tsx
 import Image from "next/image";
 import Link from "next/link";
+import { PriceRecord, SpecialOffer, ItemCardProps } from "@/types/Item";
 
-interface ItemCardProps {
-  name: string;
-  price: string;
-  imageUrl: string;
-  offer?: string | null;
-}
+const ItemCard = ({
+  name,
+  description,
+  category,
+  image_url,
+  priceRecord,
+  specialOffer,
+  id,
+}: ItemCardProps) => {
+  const fullImageUrl = `${process.env.NEXT_PUBLIC_API_URL}${image_url}`;
+  const discountImageUrl = specialOffer
+    ? `${process.env.NEXT_PUBLIC_API_URL}${specialOffer.image_url}`
+    : null;
 
-const ItemCard = ({ name, price, imageUrl, offer }: ItemCardProps) => {
   return (
     <Link href={`/products/${name.toLowerCase().replace(/ /g, "-")}`} passHref>
       <div className="max-w-sm flex flex-col h-full rounded overflow-hidden shadow-lg transition duration-300 ease-in-out transform hover:scale-105">
-        <Image
-          src={imageUrl}
-          alt={name}
-          layout="responsive"
-          width={300}
-          height={200}
-          objectFit="cover"
-        />
+        <div className="relative h-48">
+          <Image
+            src={fullImageUrl}
+            alt={name}
+            layout="fill"
+            objectFit="cover"
+          />
+          {discountImageUrl && (
+            <div className="absolute right-2 top-2 w-1/4">
+              <Image
+                src={discountImageUrl}
+                alt="Discount"
+                layout="responsive"
+                width={100}
+                height={100}
+                objectFit="contain"
+              />
+            </div>
+          )}
+        </div>
 
-        <div className="px-6 py-4 flex-grow flex flex-col justify-between">
-          <h3 className="font-bold text-xl mb-2">{name}</h3>
-          <div className="flex items-center justify-between">
-            <p className="text-lg font-semibold text-gray-800">{price}</p>
-            {offer && (
-              <span className="bg-red-100 bg-red-600 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded-full text-white dark:bg-red-200 dark:text-red-900">
-                {offer}
-              </span>
+        <div className="px-6 py-4 flex-grow">
+          <div className="space-y-2">
+            <h3 className="font-bold text-xl mb-2">{name}</h3>
+            <p className="text-gray-700 text-base">{description}</p>
+            <div className="flex items-center justify-between">
+              {priceRecord && (
+                <p className="text-lg font-semibold text-gray-800">
+                  ${priceRecord.price}
+                </p>
+              )}
+              {category && (
+                <span className="inline-block bg-red-600 text-xs font-semibold mr-2 px-3 py-1 rounded-full text-white dark:bg-red-200 dark:text-red-900">
+                  {category}
+                </span>
+              )}
+            </div>
+            {specialOffer && (
+              <div className="mt-2">
+                <p className="text-sm text-red-500">
+                  {specialOffer.description}
+                </p>
+              </div>
             )}
           </div>
         </div>
