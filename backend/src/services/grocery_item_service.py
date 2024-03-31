@@ -114,3 +114,20 @@ async def delete_grocery_item(
     except SQLAlchemyError:
         await session.rollback()
         raise HTTPException(status_code=500, detail="A database error occurred")
+
+
+async def search_grocery_items(
+    session: AsyncSession, query: str
+) -> List[GroceryItem]:
+    try:
+        result = await session.execute(
+            select(GroceryItem).where(
+                GroceryItem.name.ilike(f"%{query}%")
+                | GroceryItem.description.ilike(f"%{query}%")
+            )
+        )
+        grocery_items = result.scalars().all()
+        return grocery_items
+    except SQLAlchemyError as e:
+        logger.error(f"Failed to search grocery items: {e}")
+        raise HTTPException(status_code=500, detail="Failed to search grocery items")

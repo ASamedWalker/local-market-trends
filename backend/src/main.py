@@ -42,10 +42,14 @@ app = FastAPI(lifespan=app_lifespan)
 BASE_DIR = Path(__file__).resolve().parent
 app.mount("/static", StaticFiles(directory=BASE_DIR / "static"), name="static")
 
+origins = [
+    "http://localhost:3000",  # React app address
+    "http://localhost:8000",  # FastAPI server address
+]
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],  # Adjust to match your frontend URL
+    allow_origins=origins,  # Adjust to match your frontend URL
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -59,7 +63,7 @@ async def sqlalchemy_exception_handler(request, exc):
     return HTTPException(status_code=500, detail="A database error occurred")
 
 
-app.include_router(grocery_item.router)
+# app.include_router(grocery_item.router)
 app.include_router(products.router)
 app.include_router(market.router)
 app.include_router(price_record.router)
