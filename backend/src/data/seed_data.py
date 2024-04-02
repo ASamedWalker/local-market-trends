@@ -78,6 +78,49 @@ reviews_seed_data = [
         "comment": "Delicious apples, very fresh and crisp from this store!",
         "created_at": datetime.utcnow(),
     },
+    # Generate 5 more reviews here
+     {
+        "grocery_item_id": "Apples",
+        "rating": 4,
+        "comment": "Good apples, but a bit expensive.",
+        "created_at": datetime.utcnow(),
+    },
+    {
+        "grocery_item_id": "Bananas",
+        "rating": 4.5,
+        "comment": "Great bananas, very ripe and sweet!",
+        "created_at": datetime.utcnow(),
+    },
+    {
+        "grocery_item_id": "Bananas",
+        "rating": 4,
+        "comment": "Good bananas, but a bit overripe.",
+        "created_at": datetime.utcnow(),
+    },
+    {
+        "grocery_item_id": "Carrots",
+        "rating": 5,
+        "comment": "Fresh carrots, great for salads!",
+        "created_at": datetime.utcnow(),
+    },
+    {
+        "grocery_item_id": "Carrots",
+        "rating": 3.5,
+        "comment": "Good carrots, but a bit expensive.",
+        "created_at": datetime.utcnow(),
+    },
+    {
+        "grocery_item_id": "Tomatoes",
+        "rating": 4.5,
+        "comment": "Juicy tomatoes, perfect for sandwiches!",
+        "created_at": datetime.utcnow(),
+    },
+    {
+        "grocery_item_id": "Tomatoes",
+        "rating": 4,
+        "comment": "Good tomatoes, but a bit pricey.",
+        "created_at": datetime.utcnow(),
+    }
 ]
 
 price_records_seed_data = [

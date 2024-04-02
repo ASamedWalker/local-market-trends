@@ -2,13 +2,14 @@
 import { useParams, useSearchParams, useRouter } from "next/navigation";
 import axios from "axios";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import {
   Item,
   ItemCardProps,
   PriceRecord,
   SpecialOffer,
   Market,
+  Review,
 } from "@/types/Item";
 
 const ProductPage = () => {
@@ -17,6 +18,7 @@ const ProductPage = () => {
   const [priceRecords, setPriceRecords] = useState<PriceRecord[]>([]);
   const [specialOffers, setSpecialOffers] = useState<SpecialOffer[]>([]);
   const [markets, setMarkets] = useState<Market[]>([]);
+  const [reviews, setReviews] = useState<Review[]>([]);
 
   useEffect(() => {
     const fetchProductDetails = async () => {
@@ -64,11 +66,34 @@ const ProductPage = () => {
     fetchProductDetails();
   }, [product_name]);
 
+  useEffect(() => {
+    const fetchReviews = async () => {
+      if (!product) return;
+
+      try {
+        // Fetch reviews for this product
+        const reviewsRes = await axios.get(
+          `${process.env.NEXT_PUBLIC_API_URL}/reviews/${product.id}`
+        );
+        setReviews(reviewsRes.data);
+      } catch (error) {
+        console.error("Error fetching reviews:", error);
+      }
+    };
+
+    fetchReviews();
+  }, [product]);
+
   if (!product) {
     return <div>Loading...</div>;
   }
 
   const fullImageUrl = `${process.env.NEXT_PUBLIC_API_URL}${product.image_url}`;
+  const averageRating =
+    reviews.reduce((acc, review) => acc + review.rating, 0) / reviews.length ||
+    0;
+  const reviewCount = reviews.length;
+
   return (
     <div className="container mx-auto my-8 p-4 bg-white">
       {product ? (
@@ -77,7 +102,7 @@ const ProductPage = () => {
           <div className="flex flex-col md:flex-row md:items-center border-b pb-4">
             <div className="md:flex-1">
               <Image
-                src={`${process.env.NEXT_PUBLIC_API_URL}${product.image_url}`}
+                src={fullImageUrl}
                 alt={product.name}
                 width={200}
                 height={200}
@@ -89,22 +114,25 @@ const ProductPage = () => {
             <div className="md:flex-1 md:pl-6">
               <h1 className="text-2xl font-bold">{product.name}</h1>
               <p className="text-gray-600">{product.description}</p>
-              {/* Display the first category if available */}
+              {/* Placeholder for Reviews with dynamic data */}
               <div className="flex items-center mt-2">
                 <a
                   href="#reviews"
                   className="flex items-center text-blue-500 hover:text-blue-600"
                 >
-                  {/* Dynamically render star icons based on rating, example rating: 4.5 */}
+                  {/* Dynamically render star icons based on average rating */}
                   {[...Array(5)].map((_, i) => (
                     <span
                       key={i}
-                      className="fa fa-star"
+                      className={`fa fa-star ${
+                        i < Math.round(averageRating) ? "checked" : ""
+                      }`}
                     ></span>
                   ))}
-                  <span className="ml-4">(0 reviews)</span>
+                  <span className="ml-4">({reviewCount} reviews)</span>
                 </a>
               </div>
+
               {/* Assuming priceRecords holds the most recent price */}
               <div className="text-lg font-semibold mt-2">
                 $
@@ -144,12 +172,12 @@ const ProductPage = () => {
           </div>
 
           {/* Reviews Section */}
-        <div id="reviews" className="my-8">
-          <h2 className="text-xl font-semibold mb-4">Customer Reviews</h2>
-          {/* Customer reviews will go here */}
-        </div>
+          <div id="reviews" className="my-8">
+            <h2 className="text-xl font-semibold mb-4">Customer Reviews</h2>
+            {/* Customer reviews will go here */}
+          </div>
 
-        {/* ... Rest of the Reviews Section display */}
+          {/* ... Rest of the Reviews Section display */}
         </>
       ) : (
         <div>Loading product...</div>

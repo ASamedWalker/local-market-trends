@@ -8,6 +8,7 @@ from data.database import get_session
 from services.review_service import (
     create_review,
     get_review,
+    get_all_reviews,
     get_reviews_by_grocery_item_id,
     update_review,
     delete_review,
@@ -33,6 +34,13 @@ async def get_review_endpoint(
             status_code=status.HTTP_404_NOT_FOUND, detail="Review not found"
         )
     return review
+
+@router.get("/", response_model=List[Review])
+async def get_all_reviews_endpoint(
+    session: AsyncSession = Depends(get_session),
+) -> List[Review]:
+    return await get_all_reviews(session)
+
 
 @router.get("/item/{grccery_item_id}", response_model=List[Review])
 async def get_reviews_by_grocery_item_id_endpoint(

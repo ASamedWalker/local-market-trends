@@ -9,6 +9,7 @@ from web import (
     price_record,
     special_offer,
     products,
+    reviews,
 )
 from data.database import create_db_and_tables
 from sqlalchemy.exc import SQLAlchemyError
@@ -68,6 +69,7 @@ app.include_router(products.router)
 app.include_router(market.router)
 app.include_router(price_record.router)
 app.include_router(special_offer.router)
+app.include_router(reviews.router)
 
 
 if __name__ == "__main__":

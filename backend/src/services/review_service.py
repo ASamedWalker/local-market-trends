@@ -1,5 +1,5 @@
 # Lets create a review service to interact with the Review model
-from fastapi import HTTPException, func
+from fastapi import HTTPException
 from sqlmodel import select
 from sqlalchemy.exc import NoResultFound, IntegrityError, SQLAlchemyError
 from sqlmodel.ext.asyncio.session import AsyncSession
@@ -33,6 +33,15 @@ async def get_review(
         return result
     except NoResultFound as e:
         raise HTTPException(status_code=404, detail=str(e))
+    except SQLAlchemyError as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+async def get_all_reviews(session: AsyncSession) -> List[Review]:
+    try:
+        result = await session.execute(select(Review))
+        reviews = result.scalars().all()
+        return reviews
     except SQLAlchemyError as e:
         raise HTTPException(status_code=500, detail=str(e))
 

@@ -27,6 +27,14 @@ export interface SpecialOffer {
   description: string;
 }
 
+export interface Review {
+  id: string;
+  grocery_item_id: string;
+  rating: number;
+  comment: string;
+  created_at: string;
+}
+
 export interface ItemCardProps {
   id: string;
   name: string;
@@ -35,7 +43,8 @@ export interface ItemCardProps {
   category: string;
   priceRecord?: PriceRecord;
   specialOffer?: SpecialOffer;
-  onItemClick: () => void;
+  review?: Review;
+  onClick: (productName: string) => void;
 }
 
 export interface FeaturedItemsProps {
