@@ -71,6 +71,15 @@ market_seed_data = [
     {"name": "Uptown Grocers", "location_description": "Near the north end park", "latitude": 40.785091, "longitude": -73.968285},
 ]
 
+reviews_seed_data = [
+    {
+        "grocery_item_id": "Apples",
+        "rating": 5,
+        "comment": "Delicious apples, very fresh and crisp from this store!",
+        "created_at": datetime.utcnow(),
+    },
+]
+
 price_records_seed_data = [
     {
         "grocery_item_id": "Apples",

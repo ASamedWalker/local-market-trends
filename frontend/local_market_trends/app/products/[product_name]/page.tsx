@@ -30,30 +30,34 @@ const ProductPage = () => {
         const productData = productRes.data;
         setProduct(productData);
 
-        // Fetch related data
-        const fetchPriceRecords = axios.get(
-          `${process.env.NEXT_PUBLIC_API_URL}/price_records`
-        );
-        const fetchSpecialOffers = axios.get(
-          `${process.env.NEXT_PUBLIC_API_URL}/special_offers`
-        );
-        const fetchMarkets = axios.get(
-          `${process.env.NEXT_PUBLIC_API_URL}/markets`
-        );
+        // Fetch all price records and special offers
+        const [priceRecordsResponse, specialOffersResponse, marketsResponse] =
+          await Promise.all([
+            axios.get(`${process.env.NEXT_PUBLIC_API_URL}/price_records`),
+            axios.get(`${process.env.NEXT_PUBLIC_API_URL}/special_offers`),
+            axios.get(`${process.env.NEXT_PUBLIC_API_URL}/markets`),
+          ]);
 
-        Promise.all([fetchPriceRecords, fetchSpecialOffers, fetchMarkets])
-          .then((results) => {
-            const [priceRecordsRes, specialOffersRes, marketsRes] = results;
-
-            setPriceRecords(priceRecordsRes.data);
-            setSpecialOffers(specialOffersRes.data);
-            setMarkets(marketsRes.data);
+        // Filter price records and special offers for this product
+        const relatedPriceRecords = priceRecordsResponse.data.filter(
+          (record) => record.grocery_item_id === productData.id
+        );
+        const relatedSpecialOffers = specialOffersResponse.data.filter(
+          (offer) => offer.grocery_item_id === productData.id
+        );
+        const relatedMarkets = relatedPriceRecords
+          .map((record) => {
+            return marketsResponse.data.find(
+              (market) => market.id === record.market_id
+            );
           })
-          .catch((error) => {
-            console.error("Error fetching related data:", error);
-          });
+          .filter((market): market is Market => market !== undefined);
+
+        setPriceRecords(relatedPriceRecords);
+        setSpecialOffers(relatedSpecialOffers);
+        setMarkets(relatedMarkets);
       } catch (error) {
-        console.error("Error fetching product details:", error);
+        console.error("Error fetching data:", error);
       }
     };
 
@@ -66,69 +70,89 @@ const ProductPage = () => {
 
   const fullImageUrl = `${process.env.NEXT_PUBLIC_API_URL}${product.image_url}`;
   return (
-    <div className="container mx-auto">
+    <div className="container mx-auto my-8 p-4 bg-white">
       {product ? (
         <>
-          <div className="max-w-4xl mx-auto py-8">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <div>
-                <Image
-                  src={fullImageUrl}
-                  alt={product.name}
-                  width={400}
-                  height={400}
-                  layout="responsive"
-                  className="rounded-lg"
-                />
+          {/* Product Details Section */}
+          <div className="flex flex-col md:flex-row md:items-center border-b pb-4">
+            <div className="md:flex-1">
+              <Image
+                src={`${process.env.NEXT_PUBLIC_API_URL}${product.image_url}`}
+                alt={product.name}
+                width={200}
+                height={200}
+                layout="responsive"
+                className="rounded-lg"
+              />
+            </div>
+
+            <div className="md:flex-1 md:pl-6">
+              <h1 className="text-2xl font-bold">{product.name}</h1>
+              <p className="text-gray-600">{product.description}</p>
+              {/* Display the first category if available */}
+              <div className="flex items-center mt-2">
+                <a
+                  href="#reviews"
+                  className="flex items-center text-blue-500 hover:text-blue-600"
+                >
+                  {/* Dynamically render star icons based on rating, example rating: 4.5 */}
+                  {[...Array(5)].map((_, i) => (
+                    <span
+                      key={i}
+                      className="fa fa-star"
+                    ></span>
+                  ))}
+                  <span className="ml-4">(0 reviews)</span>
+                </a>
               </div>
-              <div className="flex flex-col justify-center">
-                <h1 className="text-3xl font-semibold mb-4">{product.name}</h1>
-                <p className="text-gray-700 mb-4">{product.description}</p>
-                {/* Displaying Price Records */}
-                {priceRecords && priceRecords.length > 0 && (
-                  <div>
-                    <h2 className="text-2xl font-semibold">Price Records</h2>
-                    {priceRecords.map((record) => (
-                      <p key={record.id}>
-                        Market: {record.market_id}, Price: ${record.price},
-                        Promotional: {record.is_promotional ? "Yes" : "No"}
-                      </p>
-                    ))}
-                  </div>
-                )}
-                {/* Displaying Special Offers */}
-                {specialOffers && specialOffers.length > 0 && (
-                  <div className="mt-4">
-                    <h2 className="text-2xl font-semibold">Special Offers</h2>
-                    {specialOffers.map((offer) => (
-                      <p key={offer.id}>
-                        {offer.description} (Valid from{" "}
-                        {new Date(offer.valid_from).toLocaleDateString()} to{" "}
-                        {new Date(offer.valid_to).toLocaleDateString()})
-                      </p>
-                    ))}
-                  </div>
-                )}
+              {/* Assuming priceRecords holds the most recent price */}
+              <div className="text-lg font-semibold mt-2">
+                $
+                {priceRecords.length > 0 ? priceRecords[0].price : "Loading..."}
               </div>
+              {/* Display the first special offer if available */}
+              {specialOffers.length > 0 && (
+                <div className="mt-2 p-2 text-sm bg-yellow-100 border border-yellow-200 rounded">
+                  Special offer: {specialOffers[0].description}
+                </div>
+              )}
             </div>
           </div>
-          {/* Displaying Markets */}
-          {markets && markets.length > 0 && (
-            <div className="max-w-4xl mx-auto py-8">
-              <h2 className="text-2xl font-semibold mb-4">Available At:</h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {markets.map((market) => (
-                  <div key={market.id} className="border rounded-lg p-4">
-                    <h3 className="font-semibold">{market.name}</h3>
-                    {/* Additional market details like location can be displayed here */}
-                  </div>
-                ))}
-              </div>
+
+          {/* Availability and Store Pickup Section */}
+          <div className="my-4">
+            <h2 className="text-xl font-semibold mb-2">Availability</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {markets.map((market) => (
+                <div
+                  key={market.id}
+                  className="p-4 border rounded flex justify-between items-center"
+                >
+                  <span>{market.name}</span>
+                  <span className="text-green-600">In stock</span>{" "}
+                  {/* Dynamically show stock status based on your data */}
+                </div>
+              ))}
             </div>
-          )}
+          </div>
+
+          {/* Add to Cart Section */}
+          <div className="flex justify-end mt-4">
+            <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+              Add to Cart
+            </button>
+          </div>
+
+          {/* Reviews Section */}
+        <div id="reviews" className="my-8">
+          <h2 className="text-xl font-semibold mb-4">Customer Reviews</h2>
+          {/* Customer reviews will go here */}
+        </div>
+
+        {/* ... Rest of the Reviews Section display */}
         </>
       ) : (
-        <div>Loading...</div>
+        <div>Loading product...</div>
       )}
     </div>
   );

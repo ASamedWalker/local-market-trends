@@ -14,7 +14,8 @@ class GroceryItem(SQLModel, table=True):
     price_records: List["PriceRecord"] = Relationship(back_populates="grocery_item")
     special_offers: List["SpecialOffer"] = Relationship(
         back_populates="grocery_item"
-    )  # Use the imported SpecialOffer class
+    )
+    reviews: List["Review"] = Relationship(back_populates="grocery_item")
 
 
 class Market(SQLModel, table=True):
@@ -57,3 +58,17 @@ class SpecialOffer(SQLModel, table=True):
     grocery_item: Optional["GroceryItem"] = Relationship(
         back_populates="special_offers"
     )
+
+class Review(SQLModel, table=True):
+    __tablename__ = "review"
+    id: Optional[UUID] = Field(default_factory=uuid4, primary_key=True)
+    grocery_item_id: UUID = Field(foreign_key="grocery_item.id")
+    rating: int = Field(ge=1, le=5)  # Ratings between 1 and 5
+    comment: Optional[str] = Field(default=None)
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+
+    # Relationship back to the GroceryItem
+    grocery_item: "GroceryItem" = Relationship(back_populates="reviews")
+
+
+# Lets create a review service to interact with the Review model
