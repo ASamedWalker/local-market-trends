@@ -65,10 +65,22 @@ grocery_items_seed_data = [
 
 ]
 
-
+# lets update the seed data for markets
 market_seed_data = [
-    {"name": "Downtown Farmers' Market", "location_description": "Central square", "latitude": 40.712776, "longitude": -74.005974},
-    {"name": "Uptown Grocers", "location_description": "Near the north end park", "latitude": 40.785091, "longitude": -73.968285},
+    {
+        "name": "Downtown Farmers' Market",
+        "location_description": "123 Main Street, Downtown, City",
+        "image_url": "/static/images/markets/downtown.jpg",
+        "operating_hours": "Mon-Sat: 8am-8pm, Sun: 10am-6pm",
+        "rating": 4.5,
+    },
+    {
+        "name": "Uptown Grocers",
+        "location_description": "456 Elm Street, Uptown, City",
+        "image_url": "/static/images/markets/uptown.jpg",
+        "operating_hours": "Mon-Sat: 9am-9pm, Sun: 11am-7pm",
+        "rating": 4.0,
+    }
 ]
 
 reviews_seed_data = [

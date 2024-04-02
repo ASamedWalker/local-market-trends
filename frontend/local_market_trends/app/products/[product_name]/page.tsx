@@ -3,6 +3,7 @@ import { useParams, useSearchParams, useRouter } from "next/navigation";
 import axios from "axios";
 import Image from "next/image";
 import { use, useEffect, useState } from "react";
+import { FaStar, FaRegStar, FaStarHalfAlt } from "react-icons/fa";
 import {
   Item,
   ItemCardProps,
@@ -11,6 +12,20 @@ import {
   Market,
   Review,
 } from "@/types/Item";
+
+const renderStars = (rating) => {
+  let stars = [];
+  for (let i = 1; i <= 5; i++) {
+    if (i <= rating) {
+      stars.push(<FaStar key={i} className="text-yellow-500" />);
+    } else if (i === Math.ceil(rating) && !Number.isInteger(rating)) {
+      stars.push(<FaStarHalfAlt key={i} className="text-yellow-500" />);
+    } else {
+      stars.push(<FaRegStar key={i} className="text-yellow-500" />);
+    }
+  }
+  return stars;
+};
 
 const ProductPage = () => {
   const { product_name } = useParams<{ product_name: string }>();
@@ -89,10 +104,8 @@ const ProductPage = () => {
   }
 
   const fullImageUrl = `${process.env.NEXT_PUBLIC_API_URL}${product.image_url}`;
-  const averageRating =
-    reviews.reduce((acc, review) => acc + review.rating, 0) / reviews.length ||
-    0;
-  const reviewCount = reviews.length;
+  const averageRating = 4.5; // Placeholder average rating
+  const reviewCount = 4.5; // Placeholder review count
 
   return (
     <div className="container mx-auto my-8 p-4 bg-white">
@@ -120,16 +133,9 @@ const ProductPage = () => {
                   href="#reviews"
                   className="flex items-center text-blue-500 hover:text-blue-600"
                 >
-                  {/* Dynamically render star icons based on average rating */}
-                  {[...Array(5)].map((_, i) => (
-                    <span
-                      key={i}
-                      className={`fa fa-star ${
-                        i < Math.round(averageRating) ? "checked" : ""
-                      }`}
-                    ></span>
-                  ))}
-                  <span className="ml-4">({reviewCount} reviews)</span>
+                  {/* Display Star Ratings */}
+                  {renderStars(averageRating)}
+                  <span className="ml-4">{reviewCount} reviews</span>
                 </a>
               </div>
 
@@ -162,13 +168,6 @@ const ProductPage = () => {
                 </div>
               ))}
             </div>
-          </div>
-
-          {/* Add to Cart Section */}
-          <div className="flex justify-end mt-4">
-            <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-              Add to Cart
-            </button>
           </div>
 
           {/* Reviews Section */}

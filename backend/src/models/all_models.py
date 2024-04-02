@@ -23,8 +23,9 @@ class Market(SQLModel, table=True):
     id:  Optional[UUID] = Field(default_factory=uuid4, primary_key=True)
     name: str = Field(index=True)
     location_description: str = Field(default=None)
-    latitude: Optional[float] = Field(default=None)
-    longitude: Optional[float] = Field(default=None)
+    image_url: Optional[str] = Field(default=None)
+    opeating_hours: Optional[str] = Field(default=None)
+    rating: Optional[float] = Field(default=None)
     # Define a relationship with the PriceRecord model
     price_records: List["PriceRecord"] = Relationship(back_populates="market")
 
