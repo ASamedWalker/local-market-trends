@@ -34,6 +34,7 @@ async def get_all_products_endpoint(
 async def get_product_endpoint(
     product_name: str, session: AsyncSession = Depends(get_session)
 ) -> GroceryItem:
+    print(f"Requested product_name: {product_name}")
     product = await get_grocery_item_by_name(session, product_name)
     if not product:
         raise HTTPException(

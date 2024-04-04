@@ -58,7 +58,8 @@ async def get_all_grocery_items(session: AsyncSession) -> List[GroceryItem]:
 
 async def get_grocery_item_by_name(session: AsyncSession, name: str) -> Optional[GroceryItem]:
     try:
-        result = await session.execute(select(GroceryItem).where(func.lower(GroceryItem.name) == func.lower(name)))
+        formatted_name = name.replace('-', ' ')
+        result = await session.execute(select(GroceryItem).where(func.lower(GroceryItem.name) == func.lower(formatted_name)))
         grocery_item = result.scalars().first()
         return grocery_item
     except SQLAlchemyError as e:

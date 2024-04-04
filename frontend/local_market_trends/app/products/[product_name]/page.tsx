@@ -42,8 +42,11 @@ const ProductPage = () => {
       try {
         // Fetch product details
         const productRes = await axios.get(
-          `${process.env.NEXT_PUBLIC_API_URL}/products/${product_name}`
+          `${process.env.NEXT_PUBLIC_API_URL}/products/${encodeURIComponent(
+           product_name
+          )}`
         );
+
         const productData = productRes.data;
         setProduct(productData);
 
@@ -104,7 +107,6 @@ const ProductPage = () => {
   }
 
   const fullImageUrl = `${process.env.NEXT_PUBLIC_API_URL}${product.image_url}`;
-  const marketUrl = `${process.env.NEXT_PUBLIC_API_URL}${markets.image_url}`;
   const averageRating = 4.5; // Placeholder average rating
   const reviewCount = 4.5; // Placeholder review count
 
@@ -158,25 +160,44 @@ const ProductPage = () => {
           <div className="my-8">
             <h2 className="text-xl font-semibold mb-4">Market Availability</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {markets.map((market) => (
-                <div key={market.id} className="border rounded-lg overflow-hidden shadow-lg">
-                  <div className="relative h-48 w-full">
-                    <Image
-                      src={marketUrl}
-                      alt={market.name}
-                      layout="fill"
-                      objectFit="cover"
-                    />
-                  <div className="p-4">
-                    <h3 className="font-bold text-lg">{market.name}</h3>
-                    <p className="text-sm mb-2">Operating Hours: {market.operating_hours}</p>
-                    <p className="text-sm">Rating: {market.rating ? `${market.rating} / 5` : "Not rated yet"}</p>
+              {markets.map((market) => {
+                // Correctly construct the URL for each market's image inside the map function
+                const marketImageUrl = `${process.env.NEXT_PUBLIC_API_URL}${market.image_url}`;
+                return (
+                  <div
+                    key={market.id}
+                    className="border rounded-lg overflow-hidden shadow-lg"
+                  >
+                    <div className="relative h-48 w-full">
+                      <Image
+                        src={marketImageUrl}
+                        alt={market.name}
+                        layout="fill"
+                        objectFit="cover"
+                      />
+                    </div>
+                    <div className="p-4">
+                      <h3 className="font-bold text-lg">{market.name}</h3>
+                      <p className="text-sm mb-2">
+                        Operating Hours: {market.operating_hours}
+                      </p>
+                      <div className="flex items-center">
+                        {renderStars(market.rating)}
+                        <span className="ml-2 text-sm">
+                          (
+                          {market.rating
+                            ? `${market.rating}/5`
+                            : "Not rated yet"}
+                          )
+                        </span>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
-            
+
           {/* Reviews Section */}
           <div id="reviews" className="my-8">
             <h2 className="text-xl font-semibold mb-4">Customer Reviews</h2>
