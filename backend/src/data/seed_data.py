@@ -68,18 +68,46 @@ grocery_items_seed_data = [
 # lets update the seed data for markets
 market_seed_data = [
     {
-        "name": "Downtown Farmers' Market",
-        "location_description": "123 Main Street, Downtown, City",
-        "image_url": "/static/images/markets/downtown.jpg",
+        "name": "whole foods market",
+        "location_description": "123 Main Street, Anytown, USA",
+        "image_url": "/static/images/markets/whole_foods_market.jpg",
         "operating_hours": "Mon-Sat: 8am-8pm, Sun: 10am-6pm",
         "rating": 4.5,
     },
     {
-        "name": "Uptown Grocers",
-        "location_description": "456 Elm Street, Uptown, City",
-        "image_url": "/static/images/markets/uptown.jpg",
-        "operating_hours": "Mon-Sat: 9am-9pm, Sun: 11am-7pm",
+        "name": "morrisons market",
+        "location_description": "456 Elm Street, manhattan, USA",
+        "image_url": "/static/images/markets/morrisons_market.jpg",
+        "operating_hours": "Mon-Sat: 7am-9pm, Sun: 9am-5pm",
         "rating": 4.0,
+    },
+    {
+        "name": "m ll market",
+        "location_description": "789 Oak Street, harlem, USA",
+        "image_url": "/static/images/markets/m_local_market.jpg",
+        "operating_hours": "Mon-Sat: 9am-9pm, Sun: 10am-7pm",
+        "rating": 4.2,
+    },
+    {
+        "name": "minuto market",
+        "location_description": "101 Market Street, sprint, USA",
+        "image_url": "/static/images/markets/minuto_market.jpg",
+        "operating_hours": "Sat: 8am-12pm, Sun: 10am-2pm",
+        "rating": 4.8,
+    },
+    {
+        "name": "fresh and easy market",
+        "location_description": "202 Grocery Avenue, Ashtown, USA",
+        "image_url": "/static/images/markets/fresh_easy_market.jpg",
+        "operating_hours": "Mon-Sat: 9am-8pm, Sun: 10am-6pm",
+        "rating": 4.6,
+    },
+    {
+        "name": "wholeworthsrket",
+        "location_description": "303 Farm Road, Greenfield, USA",
+        "image_url": "/static/images/markets/farmers_market.jpg",
+        "operating_hours": "Sat: 8am-12pm, Sun: 10am-2pm",
+        "rating": 4.9,
     }
 ]
 
@@ -135,10 +163,11 @@ reviews_seed_data = [
     }
 ]
 
+# lets update the seed data for price records to reflect the new markets
 price_records_seed_data = [
     {
         "grocery_item_id": "Apples",
-        "market_id": "Downtown Farmers' Market",
+        "market_id": "whole foods market",
         "price": 1.99,
         "date_recorded": datetime.utcnow(),
         "is_promotional": False,
@@ -148,7 +177,7 @@ price_records_seed_data = [
     # Add more price records here and generate random promotional details
     {
         "grocery_item_id": "Apples",
-        "market_id": "Uptown Grocers",
+        "market_id": "morrisons market",
         "price": 2.49,
         "date_recorded": datetime.utcnow(),
         "is_promotional": False,
@@ -156,7 +185,7 @@ price_records_seed_data = [
     },
     {
         "grocery_item_id": "Bananas",
-        "market_id": "Downtown Farmers' Market",
+        "market_id": "whole foods market",
         "price": 0.99,
         "date_recorded": datetime.utcnow(),
         "is_promotional": False,
@@ -164,7 +193,7 @@ price_records_seed_data = [
     },
     {
         "grocery_item_id": "Bananas",
-        "market_id": "Uptown Grocers",
+        "market_id": "minuto market",
         "price": 1.29,
         "date_recorded": datetime.utcnow(),
         "is_promotional": False,
@@ -172,7 +201,7 @@ price_records_seed_data = [
     },
     {
         "grocery_item_id": "Carrots",
-        "market_id": "Downtown Farmers' Market",
+        "market_id": "whole foods market",
         "price": 0.79,
         "date_recorded": datetime.utcnow(),
         "is_promotional": False,
@@ -180,7 +209,7 @@ price_records_seed_data = [
     },
     {
         "grocery_item_id": "Carrots",
-        "market_id": "Uptown Grocers",
+        "market_id": "morrisons market",
         "price": 0.99,
         "date_recorded": datetime.utcnow(),
         "is_promotional": False,
@@ -188,7 +217,7 @@ price_records_seed_data = [
     },
     {
         "grocery_item_id": "Tomatoes",
-        "market_id": "Downtown Farmers' Market",
+        "market_id": "wholeworths market",
         "price": 1.29,
         "date_recorded": datetime.utcnow(),
         "is_promotional": False,
@@ -196,7 +225,7 @@ price_records_seed_data = [
     },
     {
         "grocery_item_id": "Tomatoes",
-        "market_id": "Uptown Grocers",
+        "market_id": "fresh and easy market",
         "price": 1.49,
         "date_recorded": datetime.utcnow(),
         "is_promotional": False,
@@ -204,7 +233,7 @@ price_records_seed_data = [
     },
     {
         "grocery_item_id": "Whole Wheat Bread",
-        "market_id": "Downtown Farmers' Market",
+        "market_id": "m local market",
         "price": 2.99,
         "date_recorded": datetime.utcnow(),
         "is_promotional": False,
@@ -212,7 +241,7 @@ price_records_seed_data = [
     },
     {
         "grocery_item_id": "Whole Wheat Bread",
-        "market_id": "Uptown Grocers",
+        "market_id": "minuto market",
         "price": 3.49,
         "date_recorded": datetime.utcnow(),
         "is_promotional": False,
@@ -220,7 +249,7 @@ price_records_seed_data = [
     },
     {
         "grocery_item_id": "Orange Juice",
-        "market_id": "Downtown Farmers' Market",
+        "market_id": "whole foods market",
         "price": 3.99,
         "date_recorded": datetime.utcnow(),
         "is_promotional": False,
@@ -228,7 +257,7 @@ price_records_seed_data = [
     },
     {
         "grocery_item_id": "Orange Juice",
-        "market_id": "Uptown Grocers",
+        "market_id": "morrisons market",
         "price": 4.49,
         "date_recorded": datetime.utcnow(),
         "is_promotional": False,
@@ -236,7 +265,7 @@ price_records_seed_data = [
     },
     {
         "grocery_item_id": "Eggs",
-        "market_id": "Downtown Farmers' Market",
+        "market_id": "m local market",
         "price": 2.49,
         "date_recorded": datetime.utcnow(),
         "is_promotional": False,
@@ -244,7 +273,7 @@ price_records_seed_data = [
     },
     {
         "grocery_item_id": "Eggs",
-        "market_id": "Uptown Grocers",
+        "market_id": "Wholesworth Farmers' Market",
         "price": 2.99,
         "date_recorded": datetime.utcnow(),
         "is_promotional": False,
@@ -252,7 +281,7 @@ price_records_seed_data = [
     },
     {
         "grocery_item_id": "Milk",
-        "market_id": "Downtown Farmers' Market",
+        "market_id": "whole foods market",
         "price": 3.49,
         "date_recorded": datetime.utcnow(),
         "is_promotional": False,
@@ -260,7 +289,7 @@ price_records_seed_data = [
     },
     {
         "grocery_item_id": "Milk",
-        "market_id": "Uptown Grocers",
+        "market_id": "morrisons market",
         "price": 3.99,
         "date_recorded": datetime.utcnow(),
         "is_promotional": False,
@@ -268,7 +297,7 @@ price_records_seed_data = [
     },
     {
         "grocery_item_id": "Cheddar Cheese",
-        "market_id": "Downtown Farmers' Market",
+        "market_id": "fresh and easy market",
         "price": 4.99,
         "date_recorded": datetime.utcnow(),
         "is_promotional": False,
@@ -276,7 +305,7 @@ price_records_seed_data = [
     },
     {
         "grocery_item_id": "Almonds",
-        "market_id": "Downtown Farmers' Market",
+        "market_id": "minuto market",
         "price": 5.99,
         "date_recorded": datetime.utcnow(),
         "is_promotional": False,
