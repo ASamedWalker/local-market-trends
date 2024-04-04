@@ -1,9 +1,14 @@
 "use client";
+import React, { useState, useEffect } from "react";
 import { useParams, useSearchParams, useRouter } from "next/navigation";
 import axios from "axios";
 import Image from "next/image";
-import { use, useEffect, useState } from "react";
 import { FaStar, FaRegStar, FaStarHalfAlt } from "react-icons/fa";
+import AddReviewForm from "@/components/AddReviewForm";
+import OverallRating from "@/components/OverallRating";
+import ReviewCard from "@/components/ReviewCard";
+import { handleNewReviewSubmission } from "@/services/reviewService";
+import { renderStars } from "@/utils/renderStars";
 import {
   Item,
   ItemCardProps,
@@ -12,20 +17,6 @@ import {
   Market,
   Review,
 } from "@/types/Item";
-
-const renderStars = (rating) => {
-  let stars = [];
-  for (let i = 1; i <= 5; i++) {
-    if (i <= rating) {
-      stars.push(<FaStar key={i} className="text-yellow-500" />);
-    } else if (i === Math.ceil(rating) && !Number.isInteger(rating)) {
-      stars.push(<FaStarHalfAlt key={i} className="text-yellow-500" />);
-    } else {
-      stars.push(<FaRegStar key={i} className="text-yellow-500" />);
-    }
-  }
-  return stars;
-};
 
 const ProductPage = () => {
   const { product_name } = useParams<{ product_name: string }>();
@@ -43,7 +34,7 @@ const ProductPage = () => {
         // Fetch product details
         const productRes = await axios.get(
           `${process.env.NEXT_PUBLIC_API_URL}/products/${encodeURIComponent(
-           product_name
+            product_name
           )}`
         );
 
@@ -101,6 +92,21 @@ const ProductPage = () => {
 
     fetchReviews();
   }, [product]);
+
+  const submitNewReview = async (reviewData: { reviewText: string; rating: number }) => {
+    if (!product) return;
+
+    try {
+      await handleNewReviewSubmission(reviewData.reviewText, reviewData.rating, product.id);
+      // Refetch reviews after submission
+      const reviewsRes = await axios.get(
+        `${process.env.NEXT_PUBLIC_API_URL}/reviews/${product.id}`
+      );
+      setReviews(reviewsRes.data);
+    } catch (error) {
+      console.error("Error submitting review:", error);
+    }
+  }
 
   if (!product) {
     return <div>Loading...</div>;
@@ -201,10 +207,20 @@ const ProductPage = () => {
           {/* Reviews Section */}
           <div id="reviews" className="my-8">
             <h2 className="text-xl font-semibold mb-4">Customer Reviews</h2>
-            {/* Customer reviews will go here */}
+
+            {/* Overall Rating and Rating Snapshot */}
+            <OverallRating reviews={reviews} />
+
+            {/* Review Submission Form - you can add this if you want users to submit reviews */}
+            <AddReviewForm onSubmit={submitNewReview} />
           </div>
 
-          {/* ... Rest of the Reviews Section display */}
+          {/* Individual Review Cards */}
+          <div>
+            {reviews.map((review) => (
+              <ReviewCard key={review.id} review={review} />
+            ))}
+          </div>
         </>
       ) : (
         <div>Loading product...</div>
