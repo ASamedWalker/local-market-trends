@@ -104,6 +104,7 @@ const ProductPage = () => {
   }
 
   const fullImageUrl = `${process.env.NEXT_PUBLIC_API_URL}${product.image_url}`;
+  const marketUrl = `${process.env.NEXT_PUBLIC_API_URL}${markets.image_url}`;
   const averageRating = 4.5; // Placeholder average rating
   const reviewCount = 4.5; // Placeholder review count
 
@@ -154,22 +155,28 @@ const ProductPage = () => {
           </div>
 
           {/* Availability and Store Pickup Section */}
-          <div className="my-4">
-            <h2 className="text-xl font-semibold mb-2">Availability</h2>
+          <div className="my-8">
+            <h2 className="text-xl font-semibold mb-4">Market Availability</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {markets.map((market) => (
-                <div
-                  key={market.id}
-                  className="p-4 border rounded flex justify-between items-center"
-                >
-                  <span>{market.name}</span>
-                  <span className="text-green-600">In stock</span>{" "}
-                  {/* Dynamically show stock status based on your data */}
+                <div key={market.id} className="border rounded-lg overflow-hidden shadow-lg">
+                  <div className="relative h-48 w-full">
+                    <Image
+                      src={marketUrl}
+                      alt={market.name}
+                      layout="fill"
+                      objectFit="cover"
+                    />
+                  <div className="p-4">
+                    <h3 className="font-bold text-lg">{market.name}</h3>
+                    <p className="text-sm mb-2">Operating Hours: {market.operating_hours}</p>
+                    <p className="text-sm">Rating: {market.rating ? `${market.rating} / 5` : "Not rated yet"}</p>
+                  </div>
                 </div>
               ))}
             </div>
           </div>
-
+            
           {/* Reviews Section */}
           <div id="reviews" className="my-8">
             <h2 className="text-xl font-semibold mb-4">Customer Reviews</h2>

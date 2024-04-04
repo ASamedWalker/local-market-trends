@@ -82,7 +82,7 @@ market_seed_data = [
         "rating": 4.0,
     },
     {
-        "name": "m ll market",
+        "name": "m local market",
         "location_description": "789 Oak Street, harlem, USA",
         "image_url": "/static/images/markets/m_local_market.jpg",
         "operating_hours": "Mon-Sat: 9am-9pm, Sun: 10am-7pm",
@@ -103,7 +103,7 @@ market_seed_data = [
         "rating": 4.6,
     },
     {
-        "name": "wholeworthsrket",
+        "name": "wholeworths market",
         "location_description": "303 Farm Road, Greenfield, USA",
         "image_url": "/static/images/markets/farmers_market.jpg",
         "operating_hours": "Sat: 8am-12pm, Sun: 10am-2pm",
@@ -273,7 +273,7 @@ price_records_seed_data = [
     },
     {
         "grocery_item_id": "Eggs",
-        "market_id": "Wholesworth Farmers' Market",
+        "market_id": "wholeworths market",
         "price": 2.99,
         "date_recorded": datetime.utcnow(),
         "is_promotional": False,

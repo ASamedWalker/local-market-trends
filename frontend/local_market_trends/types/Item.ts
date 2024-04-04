@@ -56,6 +56,7 @@ export interface Market {
   id: string;
   name: string;
   location_description: string;
-  latitude: number;
-  longitude: number;
+  image_url: string;
+  opening_hours: string;
+  rating: number;
 }
