@@ -2,9 +2,7 @@ import React from 'react';
 import { format } from 'date-fns'; // Ensure you have 'date-fns' installed for date formatting
 import { renderStars } from "@/utils/renderStars";
 
-const ReviewCard = ({ review }: { review: ReviewType }) => {
-  // Format the date if you're storing it in a standard ISO format
-  // You might need to adjust based on how you store dates
+const ReviewCard = ({ review }) => {
   const reviewDate = review.date ? format(new Date(review.date), "MMM dd, yyyy") : "Unknown date";
 
   return (

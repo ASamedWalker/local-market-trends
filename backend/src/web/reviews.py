@@ -42,7 +42,7 @@ async def get_all_reviews_endpoint(
     return await get_all_reviews(session)
 
 
-@router.get("/item/{grccery_item_id}", response_model=List[Review])
+@router.get("/item/{grocery_item_id}", response_model=List[Review])
 async def get_reviews_by_grocery_item_id_endpoint(
     grocery_item_id: UUID, session: AsyncSession = Depends(get_session)
 ) -> List[Review]:

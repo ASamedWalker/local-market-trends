@@ -25,6 +25,8 @@ const ProductPage = () => {
   const [specialOffers, setSpecialOffers] = useState<SpecialOffer[]>([]);
   const [markets, setMarkets] = useState<Market[]>([]);
   const [reviews, setReviews] = useState<Review[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [feedback, setFeedback] = useState({ success: "", error: "" });
 
   useEffect(() => {
     const fetchProductDetails = async () => {
@@ -93,20 +95,37 @@ const ProductPage = () => {
     fetchReviews();
   }, [product]);
 
-  const submitNewReview = async (reviewData: { reviewText: string; rating: number }) => {
+  const submitNewReview = async (reviewData: {
+    reviewText: string;
+    rating: number;
+  }) => {
     if (!product) return;
 
+    setIsLoading(true); // Indicate the start of submission process
+    setFeedback({ success: "", error: "" }); // Reset feedback messages
+
     try {
-      await handleNewReviewSubmission(reviewData.reviewText, reviewData.rating, product.id);
+      await handleNewReviewSubmission(
+        reviewData.reviewText,
+        reviewData.rating,
+        product.id
+      );
       // Refetch reviews after submission
       const reviewsRes = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_URL}/reviews/${product.id}`
+        `${process.env.NEXT_PUBLIC_API_URL}/reviews/item/${product.id}`
       );
       setReviews(reviewsRes.data);
+      setFeedback({ ...feedback, success: "Review submitted successfully!" });
     } catch (error) {
       console.error("Error submitting review:", error);
+      setFeedback({
+        ...feedback,
+        error: "Failed to submit review. Please try again later.",
+      });
+    } finally {
+      setIsLoading(false); // Indicate the end of submission process
     }
-  }
+  };
 
   if (!product) {
     return <div>Loading...</div>;
@@ -211,8 +230,20 @@ const ProductPage = () => {
             {/* Overall Rating and Rating Snapshot */}
             <OverallRating reviews={reviews} />
 
-            {/* Review Submission Form - you can add this if you want users to submit reviews */}
-            <AddReviewForm onSubmit={submitNewReview} />
+            {/* Review Submission Form */}
+            <div className="review-submission-section">
+              {/* Loading and Feedback Messages */}
+              {isLoading && <p>Loading...</p>}
+              {feedback.error && (
+                <p className="text-red-500">{feedback.error}</p>
+              )}
+              {feedback.success && (
+                <p className="text-green-500">{feedback.success}</p>
+              )}
+
+              {/* Review Form */}
+              <AddReviewForm onSubmit={submitNewReview} />
+            </div>
           </div>
 
           {/* Individual Review Cards */}

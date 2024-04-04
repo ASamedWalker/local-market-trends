@@ -5,6 +5,7 @@ import { StarRating } from "@/components/starRating";
 const AddReviewForm = ({ onSubmit }) => {
   const [reviewText, setReviewText] = useState("");
   const [rating, setRating] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -34,9 +35,10 @@ const AddReviewForm = ({ onSubmit }) => {
       />
       <button
         type="submit"
+        disabled={isLoading}
         className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-2"
       >
-        Submit Review
+        {isLoading ? 'Submitting...' : 'Submit Review'}
       </button>
     </form>
   );
