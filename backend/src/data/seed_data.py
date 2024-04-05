@@ -62,7 +62,43 @@ grocery_items_seed_data = [
         "category": "Nuts & Seeds",
         "image_url": "/static/images/fruits/almonds.jpg",
     },
-
+    # Add more grocery items here
+    {
+        "name": "Cashews",
+        "description": "Roasted cashews, a delicious and healthy snack.",
+        "category": "Nuts & Seeds",
+        "image_url": "/static/images/fruits/almonds.jpg",
+    },
+    {
+        "name": "Peanuts",
+        "description": "Salted peanuts, a classic snack for all occasions.",
+        "category": "Nuts & Seeds",
+        "image_url": "/static/images/fruits/milk.jpg",
+    },
+    {
+        "name": "Pistachios",
+        "description": "Roasted pistachios, a flavorful and nutritious snack.",
+        "category": "Nuts & Seeds",
+        "image_url": "/static/images/fruits/eggs.jpg",
+    },
+    {
+        "name": "Walnuts",
+        "description": "Crunchy walnuts, rich in omega-3 fatty acids.",
+        "category": "Nuts & Seeds",
+        "image_url": "/static/images/fruits/milk.jpg",
+    },
+    {
+        "name": "Sunflower Seeds",
+        "description": "Roasted sunflower seeds, a healthy and tasty snack.",
+        "category": "Nuts & Seeds",
+        "image_url": "/static/images/fruits/eggs.jpg",
+    },
+    {
+        "name": "Pumpkin Seeds",
+        "description": "Toasted pumpkin seeds, a nutritious and crunchy snack.",
+        "category": "Nuts & Seeds",
+        "image_url": "/static/images/fruits/milk.jpg",
+    },
 ]
 
 # lets update the seed data for markets

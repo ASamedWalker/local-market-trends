@@ -1,7 +1,10 @@
+from pydantic import BaseModel
+from pydantic.generics import GenericModel
 from sqlmodel import Field, SQLModel, Relationship
-from typing import Optional, List
+from typing import Optional, List, TypeVar, Generic, Dict, Any
 from datetime import datetime
 from uuid import UUID, uuid4
+
 
 
 class GroceryItem(SQLModel, table=True):
@@ -71,5 +74,3 @@ class Review(SQLModel, table=True):
     # Relationship back to the GroceryItem
     grocery_item: "GroceryItem" = Relationship(back_populates="reviews")
 
-
-# Lets create a review service to interact with the Review model

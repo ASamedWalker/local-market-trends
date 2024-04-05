@@ -1,11 +1,12 @@
 # src/services/grocery_item_service.py
 from fastapi import HTTPException
-from typing import List, Optional
+from typing import List, Optional, Dict, Any
 from uuid import UUID
 from sqlmodel import select
 from sqlalchemy.sql import func
 from sqlalchemy.exc import NoResultFound, IntegrityError, SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy_pagination import paginate
 import logging
 
 
@@ -47,14 +48,30 @@ async def get_grocery_item(
         raise HTTPException(status_code=500, detail=str(e))
 
 
-async def get_all_grocery_items(session: AsyncSession) -> List[GroceryItem]:
+async def get_all_grocery_items(session: AsyncSession, page: int, limit: int) -> Dict[str, Any]:
     try:
-        result = await session.execute(select(GroceryItem))
-        grocery_items = result.scalars().all()
-        return grocery_items
+        # Get the total number of items
+        count_query = select(func.count()).select_from(GroceryItem)
+        total_items_result = await session.execute(count_query)
+        total_items = total_items_result.scalar()
+
+        # Get the items for the current page
+        items_query = select(GroceryItem).offset((page - 1) * limit).limit(limit)
+        items_result = await session.execute(items_query)
+        items = items_result.scalars().all()
+
+        # Calculate the total number of pages
+        total_pages = (total_items + limit - 1) // limit
+
+        return {
+            "items": items,
+            "total_items": total_items,
+            "total_pages": total_pages,
+            "current_page": page
+        }
     except SQLAlchemyError as e:
-        logger.error(f"Failed to retrieve grocery items: {e}")
-    raise HTTPException(status_code=500, detail="Failed to retrieve grocery items")
+        logger.error(f"Failed to retrieve all grocery items: {e}")
+        raise HTTPException(status_code=500, detail="Failed to retrieve all grocery items")
 
 async def get_grocery_item_by_name(session: AsyncSession, name: str) -> Optional[GroceryItem]:
     try:

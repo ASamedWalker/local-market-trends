@@ -1,6 +1,6 @@
-"use client";
-// components/FeaturedItems.client.tsx
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
+import { AiOutlineSearch } from "react-icons/ai";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import ItemCard from "./ItemCard";
 import {
   Item,
@@ -14,17 +14,10 @@ const FeaturedItems = ({ items }: FeaturedItemsProps) => {
   const [filteredItems, setFilteredItems] = useState<Item[]>([]);
   const [priceRecords, setPriceRecords] = useState<PriceRecord[]>([]);
   const [specialOffers, setSpecialOffers] = useState<SpecialOffer[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    setFilteredItems(
-      items.filter((item) =>
-        item.name.toLowerCase().includes(searchTerm.toLowerCase())
-      )
-    );
-  }, [items, searchTerm]);
-
-  useEffect(() => {
-    // Fetch prices
     const fetchPriceRecords = async () => {
       try {
         const res = await fetch(
@@ -35,10 +28,10 @@ const FeaturedItems = ({ items }: FeaturedItemsProps) => {
         setPriceRecords(data);
       } catch (error) {
         console.error("Error fetching price records:", error);
+        setError(error);
       }
     };
 
-    // Fetch special offers
     const fetchSpecialOffers = async () => {
       try {
         const res = await fetch(
@@ -49,32 +42,47 @@ const FeaturedItems = ({ items }: FeaturedItemsProps) => {
         setSpecialOffers(data);
       } catch (error) {
         console.error("Error fetching special offers:", error);
+        setError(error);
       }
     };
 
     fetchPriceRecords();
     fetchSpecialOffers();
+    setLoading(false);
   }, []);
 
-  const findPriceForItem = (itemId: string): PriceRecord | undefined => {
-    return priceRecords.find((record) => record.grocery_item_id === itemId);
-  };
-  // New function to find the special offer for an item
-  const findSpecialOfferForItem = (
-    itemId: string
-  ): SpecialOffer | undefined => {
-    return specialOffers.find((offer) => offer.grocery_item_id === itemId);
-  };
+  const itemsWithDetails = useMemo(() => {
+    return filteredItems.map((item) => {
+      const priceRecord = priceRecords.find(
+        (record) => record.grocery_item_id === item.id
+      );
+      const specialOffer = specialOffers.find(
+        (offer) => offer.grocery_item_id === item.id
+      );
+      return { ...item, priceRecord, specialOffer };
+    });
+  }, [filteredItems, priceRecords, specialOffers]);
 
-  // Integrate both price records and special offers with items before rendering
-  const itemsWithDetails = filteredItems.map((item) => {
-    const priceRecord = findPriceForItem(item.id);
-    const specialOffer = findSpecialOfferForItem(item.id);
-    return { ...item, priceRecord, specialOffer };
-  });
+  useEffect(() => {
+    if (Array.isArray(items)) {
+      setFilteredItems(
+        items.filter((item) =>
+          item.name.toLowerCase().includes(searchTerm.toLowerCase())
+        )
+      );
+    }
+  }, [items, searchTerm]);
 
   function onItemClick(name: string) {
-    throw new Error("Function not implemented.");
+    // Implement your own logic here
+  }
+
+  if (loading) {
+    return <AiOutlineLoading3Quarters className="animate-spin text-4xl" />;
+  }
+
+  if (error) {
+    return <p>Error: {error.message}</p>;
   }
 
   return (

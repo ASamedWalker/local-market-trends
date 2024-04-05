@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Query
-from typing import List
+from fastapi_sqla import setup, Paginate, Session, Page
+from typing import List, Dict, Any
 from uuid import UUID
 from sqlmodel.ext.asyncio.session import AsyncSession
 
@@ -24,11 +25,14 @@ async def create_product_endpoint(
 ) -> GroceryItem:
     return await create_grocery_item(session, product)
 
-@router.get("/", response_model=List[GroceryItem])
+@router.get("/", response_model=Dict[str, Any])
 async def get_all_products_endpoint(
     session: AsyncSession = Depends(get_session),
-) -> List[GroceryItem]:
-    return await get_all_grocery_items(session)
+    page: int = Query(default=1, ge=1),
+    limit: int = Query(default=10, ge=1, le=100)
+):
+    pagination_result = await get_all_grocery_items(session, page, limit)
+    return pagination_result
 
 @router.get("/{product_name}", response_model=GroceryItem)
 async def get_product_endpoint(
