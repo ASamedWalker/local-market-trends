@@ -86,7 +86,7 @@ const FeaturedItems = ({ items }: FeaturedItemsProps) => {
   }
 
   return (
-    <div className="container mx-auto my-8">
+    <div className="container mx-auto my-8 p-4 bg-white max-w-7xl">
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {itemsWithDetails.map((item) => (
           <ItemCard

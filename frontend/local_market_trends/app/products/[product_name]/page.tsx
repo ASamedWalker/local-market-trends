@@ -17,6 +17,7 @@ import {
   Market,
   Review,
 } from "@/types/Item";
+import { BeatLoader } from "react-spinners";
 
 const ProductPage = () => {
   const { product_name } = useParams<{ product_name: string }>();
@@ -95,6 +96,14 @@ const ProductPage = () => {
     fetchReviews();
   }, [product]);
 
+  if (!product) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <BeatLoader color="#123abc" loading={true} size={50} />
+      </div>
+    );
+  }
+
   const submitNewReview = async (reviewData: {
     reviewText: string;
     rating: number;
@@ -136,7 +145,7 @@ const ProductPage = () => {
   const reviewCount = 4.5; // Placeholder review count
 
   return (
-    <div className="container mx-auto my-8 p-4 bg-white">
+    <div className="container mx-auto my-8 p-4 bg-white max-w-6xl">
       {product ? (
         <>
           {/* Product Details Section */}
@@ -233,9 +242,10 @@ const ProductPage = () => {
             {/* Review Submission Form */}
             <div className="review-submission-section">
               {/* Loading and Feedback Messages */}
-              {isLoading && <p>Loading...</p>}
-              {feedback.error && (
-                <p className="text-red-500">{feedback.error}</p>
+              {isLoading && (
+                <div className="flex justify-center items-center min-h-screen">
+                  <BeatLoader color="#123abc" loading={true} size={50} />
+                </div>
               )}
               {feedback.success && (
                 <p className="text-green-500">{feedback.success}</p>
@@ -254,7 +264,9 @@ const ProductPage = () => {
           </div>
         </>
       ) : (
-        <div>Loading product...</div>
+        <div className="flex justify-center items-center min-h-screen">
+          <BeatLoader color="#123abc" loading={true} size={50} />
+        </div>
       )}
     </div>
   );
