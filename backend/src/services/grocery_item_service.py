@@ -20,11 +20,11 @@ async def create_grocery_item(
 ) -> GroceryItem:
     try:
         session.add(grocery_item)
-        # logging.info("session has been added")
+        logging.info("session has been added")
         await session.commit()
-        # logging.info("session has been committed")
+        logging.info("session has been committed")
         await session.refresh(grocery_item)
-        # logging.info("session has been refreshed")
+        logging.info("session has been refreshed")
         return grocery_item
     except IntegrityError as e:
         await session.rollback()

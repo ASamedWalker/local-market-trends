@@ -14,6 +14,7 @@ class GroceryItem(SQLModel, table=True):
     description: Optional[str] = Field(default=None)
     category: str
     image_url: Optional[str] = Field(default=None)
+    unit: Optional[str] = Field(default=None, description="Unit of measure for the item, e.g., per lb, per kg, pack of 10")
     price_records: List["PriceRecord"] = Relationship(back_populates="grocery_item")
     special_offers: List["SpecialOffer"] = Relationship(
         back_populates="grocery_item"
@@ -41,9 +42,17 @@ class PriceRecord(SQLModel, table=True):
     price: Optional[float]
     date_recorded: datetime = Field(default_factory=datetime.utcnow)
     is_promotional: bool = Field(default=False)
+    valid_from: Optional[datetime] = Field(default_factory=datetime.utcnow, description="The start date of the price validity")
+    valid_to: Optional[datetime] = Field(default=None, description="The end date of the price validity")
     promotional_details: Optional[str] = Field(default=None)
     grocery_item: Optional["GroceryItem"] = Relationship(back_populates="price_records")
     market: Optional["Market"] = Relationship(back_populates="price_records")
+
+
+
+class SpecialOfferGroceryItemLink(SQLModel, table=True):
+    special_offer_id: UUID = Field(default=None, foreign_key="special_offer.id", primary_key=True)
+    grocery_item_id: UUID = Field(default=None, foreign_key="grocery_item.id", primary_key=True)
 
 
 class SpecialOffer(SQLModel, table=True):
@@ -60,8 +69,9 @@ class SpecialOffer(SQLModel, table=True):
         return self.valid_from <= self.valid_to
 
     grocery_item: Optional["GroceryItem"] = Relationship(
-        back_populates="special_offers"
+        back_populates="special_offers", link_model=SpecialOfferGroceryItemLink
     )
+
 
 class Review(SQLModel, table=True):
     __tablename__ = "review"
@@ -70,7 +80,8 @@ class Review(SQLModel, table=True):
     rating: int = Field(ge=1, le=5)  # Ratings between 1 and 5
     comment: Optional[str] = Field(default=None)
     created_at: datetime = Field(default_factory=datetime.utcnow)
-
+    upvotes: int = Field(default=0, description="Number of upvotes indicating the review's usefulness")
+    downvotes: int = Field(default=0, description="Number of downvotes indicating the review's lack of usefulness")
     # Relationship back to the GroceryItem
     grocery_item: "GroceryItem" = Relationship(back_populates="reviews")
 
