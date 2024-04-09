@@ -6,6 +6,7 @@ export interface Item {
   image_url: string;
   description: string;
   category: string;
+  unit: string;
 }
 
 export interface PriceRecord {
@@ -40,16 +41,16 @@ export interface ItemCardProps {
   name: string;
   image_url: string;
   description: string;
+  unit: string;
   category: string;
   priceRecord?: PriceRecord;
   specialOffer?: SpecialOffer;
-  review?: Review;
-  onClick: (productName: string) => void;
+  reviews?: Review[];
 }
 
 export interface FeaturedItemsProps {
   items: Item[];
-  onItemClick: (productName: string) => void;
+  shouldFetchData: boolean;
 }
 
 export interface Market {

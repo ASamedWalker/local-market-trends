@@ -1,29 +1,21 @@
 // HomePage.tsx
 "use client";
 import { useEffect, useContext, useState } from "react";
-import { useSearchParams, useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
-import { AiOutlineLoading3Quarters } from 'react-icons/ai';
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import FeaturedItems from "@/components/FeaturedItems";
 import { useSearch } from "@/components/SearchContext"; // Import your useSearch hook
 import LocalMarkets from "@/components/LocalMarkets";
 import CallToAction from "@/components/CallToAction";
-import { Item } from "@/types/Item";
 
 const HomePage = () => {
-  const router = useRouter(); // Use the useRouter hook
   const searchParams = useSearchParams();
   const { searchResults, setSearchResults } = useSearch();
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const [loading, setLoading] = useState(true);
-
   const searchQuery = searchParams.get("q");
-
-  // Define function to handle navigation to product page
-  const navigateToProductPage = (productName: string) => {
-    router.push(`/products/${encodeURIComponent(productName)}`);
-  };
 
   useEffect(() => {
     const fetchItems = async () => {
@@ -36,8 +28,8 @@ const HomePage = () => {
       try {
         const response = await fetch(url);
         const { items, total_pages } = await response.json();
-        setSearchResults(items); // Update the search results in the SearchContext
-        setTotalPages(total_pages); // Update the search results in the SearchContext
+        setSearchResults(items);
+        setTotalPages(total_pages);
       } catch (error) {
         console.error("Failed to fetch items:", error);
       } finally {
@@ -50,10 +42,7 @@ const HomePage = () => {
 
   return (
     <>
-      <FeaturedItems
-        items={searchResults}
-        onItemClick={(productName) => navigateToProductPage(productName)}
-      />
+      <FeaturedItems items={searchResults} shouldFetchData={false} />
       <div className="flex items-center justify-center">
         {loading ? (
           <AiOutlineLoading3Quarters className="animate-spin text-4xl" />

@@ -1,13 +1,16 @@
 // components/ItemCard.tsx
+import { useState, useEffect, useMemo } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { PriceRecord, SpecialOffer, ItemCardProps } from "@/types/Item";
+import { renderStars } from "@/utils/renderStars";
 
 const ItemCard = ({
   name,
   description,
   category,
   image_url,
+  unit,
   priceRecord,
   specialOffer,
   id,
@@ -16,6 +19,7 @@ const ItemCard = ({
   const discountImageUrl = specialOffer
     ? `${process.env.NEXT_PUBLIC_API_URL}${specialOffer.image_url}`
     : null;
+
 
   return (
     <Link href={`/products/${name.toLowerCase().replace(/ /g, "-")}`} passHref>
@@ -48,7 +52,7 @@ const ItemCard = ({
             <div className="flex items-center justify-between">
               {priceRecord && (
                 <p className="text-lg font-semibold text-gray-800">
-                  ${priceRecord.price}
+                  ${priceRecord.price} {unit && `${unit}`}
                 </p>
               )}
               {category && (
@@ -60,7 +64,8 @@ const ItemCard = ({
             {specialOffer && (
               <div className="mt-2">
                 <p className="text-sm text-red-500">
-                  {specialOffer.description}
+                  {specialOffer.description} - Valid until{" "}
+                  {new Date(specialOffer.valid_to).toLocaleDateString()}
                 </p>
               </div>
             )}

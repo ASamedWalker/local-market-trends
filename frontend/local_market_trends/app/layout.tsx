@@ -22,7 +22,7 @@ export default function RootLayout({ children, onSearch }: LayoutProps) {
     <SearchProvider>
       <html lang="en">
         <body className={bodyClasses}>
-          <header className="bg-teal-500 text-white p-4">
+          <header>
             <Navbar/>
           </header>
           <main className="flex-grow container mx-auto my-8">{children}</main>

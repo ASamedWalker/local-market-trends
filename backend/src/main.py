@@ -10,10 +10,12 @@ from web import (
     special_offer,
     products,
     reviews,
+    flyers,
 )
 from data.database import create_db_and_tables
 from sqlalchemy.exc import SQLAlchemyError
 import logging
+
 
 logger = logging.getLogger(__name__)
 
@@ -70,6 +72,7 @@ app.include_router(market.router)
 app.include_router(price_record.router)
 app.include_router(special_offer.router)
 app.include_router(reviews.router)
+app.include_router(flyers.router)
 
 
 if __name__ == "__main__":
