@@ -1,5 +1,3 @@
-// components/ItemCard.tsx
-import { useState, useEffect, useMemo } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { PriceRecord, SpecialOffer, ItemCardProps } from "@/types/Item";
@@ -20,22 +18,24 @@ const ItemCard = ({
     ? `${process.env.NEXT_PUBLIC_API_URL}${specialOffer.image_url}`
     : null;
 
-
   return (
     <Link href={`/products/${name.toLowerCase().replace(/ /g, "-")}`} passHref>
-      <div className="max-w-sm flex flex-col h-full rounded overflow-hidden shadow-lg transition duration-300 ease-in-out transform hover:scale-105">
+      <div className="max-w-sm flex flex-col h-full rounded overflow-hidden shadow-lg transition duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl">
         <div className="relative h-48">
           <Image
             src={fullImageUrl}
-            alt={name}
+            alt={`${name} product image`}
             layout="fill"
             objectFit="cover"
+            onError={(e) => {
+              e.currentTarget.src = "/static/images/fallback.png"; // Provide a fallback image
+            }}
           />
           {discountImageUrl && (
             <div className="absolute right-2 top-2 w-1/4">
               <Image
                 src={discountImageUrl}
-                alt="Discount"
+                alt="Discount offer"
                 layout="responsive"
                 width={100}
                 height={100}
@@ -52,7 +52,7 @@ const ItemCard = ({
             <div className="flex items-center justify-between">
               {priceRecord && (
                 <p className="text-lg font-semibold text-gray-800">
-                  ${priceRecord.price} {unit && `${unit}`}
+                  ${priceRecord.price} {unit && `/ ${unit}`}
                 </p>
               )}
               {category && (

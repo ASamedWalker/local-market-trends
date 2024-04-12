@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 body {
-  font-family: 'Open sans', sans-serif;
+  font-family: "Open sans", sans-serif;
 }
 
 /* In your global.css or a CSS module */
@@ -13,4 +13,8 @@ body {
   background-color: #f9f9f9;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.btn-primary {
+  @apply inline-flex items-center px-4 py-3 border border-transparent text-sm font-medium rounded-md text-white bg-brand-blue hover:bg-blue-700 disabled:bg-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed;
 }

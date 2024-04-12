@@ -9,19 +9,18 @@ import {
 } from "@/types/Item";
 
 const FeaturedItems = ({
-  items,
+  items = [],
   shouldFetchData = true,
 }: FeaturedItemsProps) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredItems, setFilteredItems] = useState<Item[]>([]);
   const [priceRecords, setPriceRecords] = useState<PriceRecord[]>([]);
   const [specialOffers, setSpecialOffers] = useState<SpecialOffer[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(shouldFetchData);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchPriceRecords = async () => {
-      // if (!shouldFetchData) return;
       try {
         const res = await fetch(
           `${process.env.NEXT_PUBLIC_API_URL}/price_records`
@@ -31,12 +30,11 @@ const FeaturedItems = ({
         setPriceRecords(data);
       } catch (error) {
         console.error("Error fetching price records:", error);
-        setError(error as null);
+        setError(error);
       }
     };
 
     const fetchSpecialOffers = async () => {
-      // if (!shouldFetchData) return;
       try {
         const res = await fetch(
           `${process.env.NEXT_PUBLIC_API_URL}/special_offers`
@@ -46,29 +44,31 @@ const FeaturedItems = ({
         setSpecialOffers(data);
       } catch (error) {
         console.error("Error fetching special offers:", error);
-        setError(error as null);
+        setError(error);
       }
     };
 
-    fetchPriceRecords();
-    fetchSpecialOffers();
-    setLoading(false);
+    Promise.all([fetchPriceRecords(), fetchSpecialOffers()]).finally(() => {
+      setLoading(false);
+    });
   }, []);
 
-  const itemsWithDetails = useMemo(() => {
-    return filteredItems.map((item) => {
-      const priceRecord = priceRecords.find(
-        (record) => record.grocery_item_id === item.id
-      );
-      const specialOffer = specialOffers.find(
-        (offer) => offer.grocery_item_id === item.id
-      );
-      return { ...item, priceRecord, specialOffer };
-    });
-  }, [filteredItems, priceRecords, specialOffers]);
+  const itemsWithDetails = useMemo(
+    () =>
+      filteredItems.map((item) => ({
+        ...item,
+        priceRecord: priceRecords.find(
+          (record) => record.grocery_item_id === item.id
+        ),
+        specialOffer: specialOffers.find(
+          (offer) => offer.grocery_item_id === item.id
+        ),
+      })),
+    [filteredItems, priceRecords, specialOffers]
+  );
 
   useEffect(() => {
-    if (Array.isArray(items)) {
+    if (Array.isArray(items) && items.length > 0) {
       setFilteredItems(
         items.filter((item) =>
           item.name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -78,11 +78,17 @@ const FeaturedItems = ({
   }, [items, searchTerm]);
 
   if (loading) {
-    return <AiOutlineLoading3Quarters className="animate-spin text-4xl" />;
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <AiOutlineLoading3Quarters className="animate-spin text-4xl" />
+      </div>
+    );
   }
 
   if (error) {
-    return <p>Error: {(error as Error).message}</p>;
+    return (
+      <div className="text-red-500 text-center">Error: {error.message}</div>
+    );
   }
 
   return (
